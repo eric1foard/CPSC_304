@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "928cf07615062470571573abc0843fa6",
+    "hash": "5870ce437f10f910c116c6d07bad0181",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -878,6 +878,53 @@
             "time": "2014-12-12 05:04:05"
         },
         {
+            "name": "leafo/lessphp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/leafo/lessphp.git",
+                "reference": "e701984d5d488599441623d3d56bd42103019ab6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/leafo/lessphp/zipball/e701984d5d488599441623d3d56bd42103019ab6",
+                "reference": "e701984d5d488599441623d3d56bd42103019ab6",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.3"
+            },
+            "bin": [
+                "plessc"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.4.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "lessc.inc.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT",
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Leaf Corcoran",
+                    "email": "leafot@gmail.com",
+                    "homepage": "http://leafo.net"
+                }
+            ],
+            "description": "lessphp is a compiler for LESS written in PHP.",
+            "homepage": "http://leafo.net/lessphp/",
+            "time": "2014-12-29 20:45:53"
+        },
+        {
             "name": "monolog/monolog",
             "version": "1.13.1",
             "source": {
@@ -1105,16 +1152,16 @@
         },
         {
             "name": "sensiolabs/security-checker",
-            "version": "v2.0.2",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/security-checker.git",
-                "reference": "cecb1397087dc9c733796eda6e9d121336039cdc"
+                "reference": "cde03c48d490d805ef1349e5108f8b3085981ead"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/cecb1397087dc9c733796eda6e9d121336039cdc",
-                "reference": "cecb1397087dc9c733796eda6e9d121336039cdc",
+                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/cde03c48d490d805ef1349e5108f8b3085981ead",
+                "reference": "cde03c48d490d805ef1349e5108f8b3085981ead",
                 "shasum": ""
             },
             "require": {
@@ -1146,7 +1193,7 @@
                 }
             ],
             "description": "A security checker for your composer.lock",
-            "time": "2015-04-21 07:52:05"
+            "time": "2015-05-22 14:21:04"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -1660,7 +1707,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "leafo/lessphp": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

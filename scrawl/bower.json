@@ -1,0 +1,21 @@
+{
+  "name": "scrawl",
+  "version": "0.0.0",
+  "homepage": "https://github.com/eric1foard/CPSC_304",
+  "authors": [
+    "Eric Foard <foard265@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "web/assets/vendor/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "flat-ui": "~2.2.2",
+    "bootstrap": "~3.3.4"
+  }
+}
