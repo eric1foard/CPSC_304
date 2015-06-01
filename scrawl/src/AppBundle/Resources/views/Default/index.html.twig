@@ -2,7 +2,8 @@
 
 {% block body %}
 
-{% block nav %}{% endblock %}
+{% include 'AppBundle:Nav:navBar.html.twig' %}
+
 
 <div>
       <label>Name:</label>
@@ -11,7 +12,4 @@
       <h1>Hello {{'{{yourName}}'}}!</h1>
     </div>
 
-
-
-{% include 'AppBundle:navBar.html.twig' %}
 {% endblock %}
