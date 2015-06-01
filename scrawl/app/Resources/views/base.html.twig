@@ -1,22 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
 <head>
     <meta charset="UTF-8" />
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>
+        {% block title %}Welcome!{% endblock %}
+    </title>
 
     {% block stylesheets %}
     <!-- bootstrap -->
     <link rel="stylesheet"
     href="{{ asset('assets/vendor/bootstrap/dist/css/bootstrap.css') }}">
-
     <!-- flat ui -->
     <link rel="stylesheet"
     href="{{ asset('assets/vendor/flat-ui/dist/css/flat-ui.css') }}">
-
     <!-- icons -->
     <link rel="font/truetype"
     href="{{ asset('assets/vendor/flat-ui/dist/fonts/glyphicons/flat-ui-icons-regular.ttf') }}">
-
     <!-- fonts -->
     <link rel="font/truetype"
     href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-black.ttf') }}">
@@ -30,29 +29,25 @@
     href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-light.ttf') }}">
     <link rel="font/truetype"
     href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-regular.ttf') }}">
-
     {% endblock %}
 
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 </head>
 
-
 <body>
     {% block body %}{% endblock %}
 
     {% block javascripts %}
-
-    <link rel="text/javascript"
-    href="{{ asset('assets/vendor/flat-ui/dist/js/vendor/jquery.min.js') }}">
-    <link rel="text/javascript"
-    href="{{ asset('assets/vendor/flat-ui/dist/js/vendor/respond.min.js') }}">
-    <link rel="text/javascript"
-    href="{{ asset('assets/vendor/flat-ui/dist/js/vendor/html5shiv.js') }}">
-    <link rel="text/javascript"
-    href="{{ asset('assets/vendor/flat-ui/dist/js/flat-ui.js') }}">
-    <link rel="text/javascript"
-    href="{{ asset('assets/vendor/angular/angular.js') }}">
-
+    <script
+    src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/jquery.min.js') }}"></script>
+    <script
+    src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/respond.min.js') }}"></script>
+    <script
+    src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/html5shiv.js') }}"></script>
+    <script
+    src="{{ asset('assets/vendor/flat-ui/dist/js/flat-ui.js') }}"></script>
+    <script
+    src="{{ asset('assets/vendor/angular/angular.js') }}"></script>
  {% endblock %}
 </body>
 </html>
