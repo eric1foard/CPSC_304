@@ -1,0 +1,12 @@
+{{ form_start(form) }}
+{{ form_errors(form) }}
+
+{{ form_row(form.username) }}
+{{ form_row(form.email) }}
+{{ form_row(form.password) }}
+{{ form_row(form.city) }}
+{{ form_row(form.selfSummary) }}
+
+
+{{ form_row(form.submit, { 'label': 'Submit me' }) }}
+{{ form_end(form) }}
