@@ -29,3 +29,35 @@ user_delete:
 user_show:
     path:   /user/{id}
     defaults: {_controller: AppBundle:User:show }
+
+#################################
+##            tags            ##
+#################################
+
+tag:
+    path:     /tags
+    defaults: {_controller: AppBundle:Tag:index }
+
+tag_new:
+    path:   /tag/new
+    defaults: { _controller: AppBundle:Tag:new }
+
+tag_create:
+    path:   /tag/create
+    defaults: { _controller: AppBundle:Tag:create }
+
+tag_edit:
+    path:   /tag/edit/{id}
+    defaults: {_controller: AppBundle:Tag:edit }
+
+tag_update:
+    path:   /tag/update/{id}
+    defaults: {_controller: AppBundle:Tag:update }
+
+tag_delete:
+    path:   /tag/delete/{id}
+    defaults: {_controller: AppBundle:Tag:delete }
+
+tag_show:
+    path:   /tag/{id}
+    defaults: {_controller: AppBundle:Tag:show }
