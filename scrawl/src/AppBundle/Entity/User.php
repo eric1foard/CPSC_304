@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -26,9 +27,24 @@ class User implements UserInterface, \Serializable
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @var string
+     *
+     * @Assert\Length(min = "8")
+     * @ORM\Column(name="password_hash", type="string", length=129, nullable=false)
+     * @Assert\NotBlank(message="Password may not be empty")
+     * @Assert\Length(
+     *      min = "5",
+     *      minMessage = "Password must be at least 5 characters long",
+     * )
      */
     private $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password_salt", type="string", length=40, nullable=false)
+     */
+    private $salt;
 
     /**
      * @ORM\Column(type="string", length=60, unique=true)
@@ -56,6 +72,7 @@ class User implements UserInterface, \Serializable
 
     public function __construct()
     {
+        $this->salt = md5(uniqid("p_", true) . time());
 
     }
 
@@ -68,7 +85,7 @@ class User implements UserInterface, \Serializable
     {
         // you *may* need a real salt depending on your encoder
         // see section on salt below
-        return null;
+        return $this->salt;
     }
 
     public function getPassword()
@@ -104,8 +121,7 @@ class User implements UserInterface, \Serializable
             $this->id,
             $this->username,
             $this->password,
-            // see section on salt below
-            // $this->salt
+            $this->salt
             ) = unserialize($serialized);
     }
 

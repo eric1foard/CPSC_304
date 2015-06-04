@@ -15,7 +15,6 @@ use AppBundle\Form\UserType;
 class UserController extends Controller
 {
 
-
     public function homepageAction()
     {
         $entity = new User();
@@ -46,20 +45,27 @@ class UserController extends Controller
      */
     public function createAction(Request $request)
     {
-        $entity = new User();
-        $form = $this->createCreateForm($entity);
+        $user = new User();
+        $form = $this->createCreateForm($user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            //encode password
+            $encoderFactory = $this->get('security.encoder_factory');
+            $encoder = $encoderFactory->getEncoder($user);
+            $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
+            $user->setPassword($password);
+
+            //persist user to DB
             $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
+            $em->persist($user);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('user_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('user_show', array('id' => $user->getId())));
         }
 
         return $this->render('AppBundle:User:new.html.twig', array(
-            'entity' => $entity,
+            'entity' => $user,
             'form'   => $form->createView(),
             ));
     }
