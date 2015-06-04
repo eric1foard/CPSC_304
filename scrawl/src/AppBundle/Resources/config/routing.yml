@@ -19,6 +19,9 @@ login_check:
     path:     /login_check
     defaults: {_controller: AppBundle:Security:loginCheck }
 
+_logout:
+    path:     /logout
+
 
 #################################
 ##        	  Users  	       ##

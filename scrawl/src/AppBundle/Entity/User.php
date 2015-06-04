@@ -27,6 +27,11 @@ class User implements UserInterface, \Serializable
     private $username;
 
     /**
+     * @ORM\Column(type="string", length=16, unique=false)
+     */
+    private $role;
+
+    /**
      * @var string
      *
      * @Assert\Length(min = "8")
@@ -73,6 +78,7 @@ class User implements UserInterface, \Serializable
     public function __construct()
     {
         $this->salt = md5(uniqid("p_", true) . time());
+        $this->role = 'ROLE_USER';
 
     }
 
@@ -95,7 +101,7 @@ class User implements UserInterface, \Serializable
 
     public function getRoles()
     {
-        return array('ROLE_USER');
+        return array($this->role);
     }
 
     public function eraseCredentials()
@@ -109,7 +115,6 @@ class User implements UserInterface, \Serializable
             $this->id,
             $this->username,
             $this->password,
-            // see section on salt below
             $this->salt,
             ));
     }

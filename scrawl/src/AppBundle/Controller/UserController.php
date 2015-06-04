@@ -17,6 +17,7 @@ class UserController extends Controller
 
     public function homepageAction()
     {
+
         $entity = new User();
         $form = $this->createCreateForm($entity);
 
@@ -31,6 +32,7 @@ class UserController extends Controller
      */
     public function indexAction()
     {
+
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('AppBundle:User')->findAll();
@@ -45,6 +47,16 @@ class UserController extends Controller
      */
     public function createAction(Request $request)
     {
+
+        if (($this->get('security.token_storage')->getToken()->getUser())
+            != 'anon.')
+        {
+            $this->get('session')->getFlashBag()
+            ->add('error','you cannot create a new account since you are already logged in!');
+            return $this->redirect($this->generateUrl('homepage'));
+        }
+
+
         $user = new User();
         $form = $this->createCreateForm($user);
         $form->handleRequest($request);
