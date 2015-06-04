@@ -11,7 +11,14 @@
     <ul class="nav navbar-nav">
       <li><a href="#fakelink">Photos</a></li>
       <li><a href="#fakelink">Artists</a></li>
-      <li ><a ng-click="showRegModal()">Login</a></li>
+
+      {% if not app.user %}
+      <li ><a href="{{ path('login') }}">Login</a></li>
+      <li ><a ng-click="showRegModal()">Register</a></li>
+      {% else %}
+      <li ><a href="{{ path('logout') }}">Logout</a></li>
+      {% endif %}
+
     </ul>
     <form class="navbar-form navbar-right" action="#" role="search">
       <div class="form-group">

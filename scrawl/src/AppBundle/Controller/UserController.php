@@ -144,8 +144,15 @@ class UserController extends Controller
      */
     public function editAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
+        $loggedIn = $this->get('security.token_storage')->getToken()->getUser();
+        if (!$this->canUpdateOrDelete($loggedIn, $id))
+        {
+            $this->get('session')->getFlashBag()
+            ->add('error','you do not have permission to edit another user profile!!');
+            return $this->redirect($this->generateUrl('homepage'));
+        }
 
+        $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('AppBundle:User')->find($id);
 
         if (!$entity) {
@@ -216,6 +223,15 @@ class UserController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
+        $loggedIn = $this->get('security.token_storage')->getToken()->getUser();
+
+        if (!$this->canUpdateOrDelete($loggedIn, $id))
+        {
+            $this->get('session')->getFlashBag()
+            ->add('error','you do not have permission to delete another user profile!!');
+            return $this->redirect($this->generateUrl('homepage'));
+        }
+
         $form = $this->createDeleteForm($id);
         $form->handleRequest($request);
 
@@ -249,5 +265,18 @@ class UserController extends Controller
         ->add('submit', 'submit', array('label' => 'Delete'))
         ->getForm()
         ;
+    }
+
+    //$user, $id --> boolean
+    //return true if user is Admin, or
+    //user is accessing own page, false otherwise
+    private function canUpdateOrDelete($user, $id)
+    {
+        if ((in_array('ROLE_ADMIN', $user->getRoles())) ||
+            $user->getID() == $id)
+        {
+            return true;
+        }
+        return false;
     }
 }
