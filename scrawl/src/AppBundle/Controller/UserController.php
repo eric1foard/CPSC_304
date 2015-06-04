@@ -15,6 +15,17 @@ use AppBundle\Form\UserType;
 class UserController extends Controller
 {
 
+
+    public function homepageAction()
+    {
+        $entity = new User();
+        $form = $this->createCreateForm($entity);
+
+        return $this->render('AppBundle:Default:index.html.twig', array(
+            'form' => $form->createView(),
+            ));
+    }
+
     /**
      * Lists all User entities.
      *
@@ -27,7 +38,7 @@ class UserController extends Controller
 
         return $this->render('AppBundle:User:index.html.twig', array(
             'entities' => $entities,
-        ));
+            ));
     }
     /**
      * Creates a new User entity.
@@ -50,7 +61,7 @@ class UserController extends Controller
         return $this->render('AppBundle:User:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
-        ));
+            ));
     }
 
     /**
@@ -65,7 +76,7 @@ class UserController extends Controller
         $form = $this->createForm(new UserType(), $entity, array(
             'action' => $this->generateUrl('user_create'),
             'method' => 'POST',
-        ));
+            ));
 
         $form->add('submit', 'submit', array('label' => 'Create'));
 
@@ -84,7 +95,7 @@ class UserController extends Controller
         return $this->render('AppBundle:User:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
-        ));
+            ));
     }
 
     /**
@@ -106,7 +117,7 @@ class UserController extends Controller
         return $this->render('AppBundle:User:show.html.twig', array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
-        ));
+            ));
     }
 
     /**
@@ -130,7 +141,7 @@ class UserController extends Controller
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        ));
+            ));
     }
 
     /**
@@ -145,7 +156,7 @@ class UserController extends Controller
         $form = $this->createForm(new UserType(), $entity, array(
             'action' => $this->generateUrl('user_update', array('id' => $entity->getId())),
             'method' => 'PUT',
-        ));
+            ));
 
         $form->add('submit', 'submit', array('label' => 'Update'));
 
@@ -179,7 +190,7 @@ class UserController extends Controller
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        ));
+            ));
     }
     /**
      * Deletes a User entity.
@@ -215,10 +226,10 @@ class UserController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('user_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
+        ->setAction($this->generateUrl('user_delete', array('id' => $id)))
+        ->setMethod('DELETE')
+        ->add('submit', 'submit', array('label' => 'Delete'))
+        ->getForm()
         ;
     }
 }

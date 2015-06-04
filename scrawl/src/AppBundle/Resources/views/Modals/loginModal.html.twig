@@ -5,12 +5,21 @@
                 <h4 class="modal-title">Contact changes</h4>
             </div>
             <div class="modal-body">
-                Some changes to the contact are not saved.<br />
-                Do you want to save the changes before you continue?
+                {{ form_start(form, {'attr':{'id': 'registerForm', 'ng-submit':'processForm()'}}) }}
+
+                {{ form_row(form.username, {'attr':{'ng-model':'formData.username'}}) }}
+                {{ form_row(form.email, {'attr':{'ng-model':'formData.email'}}) }}
+
+                {{ form_row(form.password.first, {'attr':{'ng-model':'formData.password'}}) }}
+                {{ form_row(form.password.second) }}
+                {{ form_row(form.city, {'attr':{'ng-model':'formData.city'}}) }}
+                {{ form_row(form.selfSummary, {'attr':{'ng-model':'formData.selfSummary'}}) }}
+
+                <!-- <div><input type="submit" value="Save" ng-click="create()"/></div> -->
+                {{ form_end(form) }}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" ng-click="" >Discard Changes</button>
-                <button type="button" class="btn btn-primary" ng-click="">Save Changes</button>
+<!--                 <button type="button" class="btn btn-default" ng-click="" >submit </button> -->
             </div>
         </div>
     </div>

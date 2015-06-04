@@ -4,7 +4,7 @@
 
 homepage:
     path:     /
-    defaults: {_controller: AppBundle:Default:homepage }
+    defaults: {_controller: AppBundle:User:homepage }
 
 
 #################################
