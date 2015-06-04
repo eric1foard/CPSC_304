@@ -28,6 +28,9 @@ security:
             provider: our_db_provider
             logout:       true
             anonymous:    true
+            form_login:
+                login_path: /login
+                check_path: /login_check
 
     # with these settings you can restrict or allow access for different parts
     # of your application based on roles, ip, host or methods
