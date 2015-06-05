@@ -6,6 +6,14 @@ homepage:
     path:     /
     defaults: {_controller: AppBundle:User:homepage }
 
+#################################
+##            AJAX             ##
+#################################
+
+ajax_photos:
+    path:     /ajax/photos
+    defaults: {_controller: AppBundle:Photo:getPhotoPaths }
+
 
 #################################
 ##            Security         ##

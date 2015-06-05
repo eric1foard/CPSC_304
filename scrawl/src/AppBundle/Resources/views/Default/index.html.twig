@@ -11,4 +11,12 @@
     </div>
 {% include 'AppBundle:Modals:loginModal.html.twig' %}
 </div>
+
+<div ng-controller="PhotoCtrl">
+	<div ng-repeat="photo in photos">
+		<div class="panel-default">
+			<img ng-src="[[photo]]" />
+		</div>
+	</div>
+</div>
 {% endblock %}

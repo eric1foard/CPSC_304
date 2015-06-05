@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Photo;
 use AppBundle\Form\PhotoType;
 
@@ -236,5 +236,19 @@ class PhotoController extends Controller
         ->add('submit', 'submit', array('label' => 'Delete'))
         ->getForm()
         ;
+    }
+
+    //create a JSON response to ajaxly return all photo
+    //filepaths so that we can render photos with ng-repeat
+    public function getPhotoPathsAction()
+    {
+        $paths = array();
+        $em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('AppBundle:Photo')->findAll();
+
+        foreach ($entities as $entity) {
+            $paths[$entity->getID()] = $entity->getWebPath();
+        }
+        return new JsonResponse($paths);
     }
 }

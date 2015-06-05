@@ -16,7 +16,7 @@
       <li ><a href="{{ path('login') }}">Login</a></li>
       <li ><a ng-click="showRegModal()">Register</a></li>
       {% else %}
-      <li><a href="{{ path('upload') }}">Upload</a></li>
+      <li><a href="{{ path('photo_new') }}">Upload</a></li>
       <li ><a href="{{ path('user_show', { 'id': app.user.id }) }}">My Profile</a></li>
       <li ><a href="{{ path('logout') }}">Logout</a></li>
       {% endif %}
