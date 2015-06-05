@@ -86,3 +86,39 @@ tag_delete:
 tag_show:
     path:   /tag/{id}
     defaults: {_controller: AppBundle:Tag:show }
+
+#################################
+##            photos           ##
+#################################
+
+photo:
+    path:     /photos
+    defaults: {_controller: AppBundle:Photo:index }
+
+photo_new:
+    path:   /photo/new
+    defaults: { _controller: AppBundle:Photo:new }
+
+photo_create:
+    path:   /photo/create
+    defaults: { _controller: AppBundle:Photo:create }
+
+photo_edit:
+    path:   /photo/edit/{id}
+    defaults: {_controller: AppBundle:Photo:edit }
+
+photo_update:
+    path:   /photo/update/{id}
+    defaults: {_controller: AppBundle:Photo:update }
+
+photo_delete:
+    path:   /photo/delete/{id}
+    defaults: {_controller: AppBundle:Photo:delete }
+
+photo_show:
+    path:   /photo/{id}
+    defaults: {_controller: AppBundle:Photo:show }
+
+upload:
+    path:     /upload
+    defaults: {_controller: AppBundle:Photo:upload }

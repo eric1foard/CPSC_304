@@ -47,7 +47,6 @@ class UserController extends Controller
      */
     public function createAction(Request $request)
     {
-
         if (($this->get('security.token_storage')->getToken()->getUser())
             != 'anon.')
         {
