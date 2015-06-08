@@ -3,7 +3,7 @@
 // [[ and ]]
 
 
-var app = angular.module('Scrawl', []);
+var app = angular.module('Scrawl', ['akoenig.deckgrid']);
 
 (function (window, angular) {
     'use strict';
