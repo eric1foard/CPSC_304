@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Geolocation
  *
- * @ORM\Table(name="geolocation", uniqueConstraints={@UniqueConstraint(name="location", columns={"latitude", "longitude"})})
+ * @ORM\Table(name="scrawl_geolocation")
  * @ORM\Entity
  */
 class Geolocation
@@ -20,22 +20,22 @@ class Geolocation
      */
     private $id;
 
-   	/**
+    /**
      * @ORM\Column(type="string", length=10, unique=true)
      */
-   	private $postalCode;
+    private $postalCode;
 
-	/**
+    /**
      * @ORM\Column(type="string", length=20, unique=false)
      */
     private $country;
 
-	/**
+    /**
      * @ORM\Column(type="string", length=20, unique=false)
      */
     private $region;
 
-	/**
+    /**
      * @ORM\Column(type="string", length=20, unique=false)
      */
     private $city;
@@ -61,11 +61,11 @@ class Geolocation
      *
      * @return integer 
      */
-    public function getId()
+    public function getId()parameters
     {
         return $this->id;
     }
-    
+
     /**
      * Set postalCode
      *
