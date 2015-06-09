@@ -61,7 +61,7 @@ class Geolocation
      *
      * @return integer 
      */
-    public function getId()parameters
+    public function getId()
     {
         return $this->id;
     }
