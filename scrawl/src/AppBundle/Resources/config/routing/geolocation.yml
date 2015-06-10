@@ -1,0 +1,30 @@
+geolocation:
+    path:     /
+    defaults: { _controller: "AppBundle:Geolocation:index" }
+
+geolocation_show:
+    path:     /{id}/show
+    defaults: { _controller: "AppBundle:Geolocation:show" }
+
+geolocation_new:
+    path:     /new
+    defaults: { _controller: "AppBundle:Geolocation:new" }
+
+geolocation_create:
+    path:     /create
+    defaults: { _controller: "AppBundle:Geolocation:create" }
+    methods:  POST
+
+geolocation_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "AppBundle:Geolocation:edit" }
+
+geolocation_update:
+    path:     /{id}/update
+    defaults: { _controller: "AppBundle:Geolocation:update" }
+    methods:  [POST, PUT]
+
+geolocation_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "AppBundle:Geolocation:delete" }
+    methods:  [POST, DELETE]
