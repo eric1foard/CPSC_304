@@ -13,6 +13,8 @@
     <!-- flat ui -->
     <link rel="stylesheet"
     href="{{ asset('assets/vendor/flat-ui/dist/css/flat-ui.css') }}">
+    <link rel="stylesheet"
+    href="{{ asset('assets/vendor/leaflet/dist/leaflet.css') }}">
     <!-- custom css -->
     <link rel="stylesheet"
     href="{{ asset('/app/css/custom.css') }}">
@@ -48,34 +50,39 @@
     {% endfor %}
     {% for flashMessage in app.session.flashbag.get('error') %}
     <div class="alert alert-danger alert-dismissable" role="alert">
-         <button type="button" class="close" data-dismiss="alert" aria-hidden="true" >×</button>
-        <strong>Error!</strong> {{ flashMessage }}
-    </div>
-    {% endfor %}
-    {% endblock %}
-    
-    {% block body %}{% endblock %}
+       <button type="button" class="close" data-dismiss="alert" aria-hidden="true" >×</button>
+       <strong>Error!</strong> {{ flashMessage }}
+   </div>
+   {% endfor %}
+   {% endblock %}
 
-    {% block javascripts %}
-    <script
-    src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/jquery.min.js') }}"></script>
-    <script
-    src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/respond.min.js') }}"></script>
-    <script
-    src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/html5shiv.js') }}"></script>
-    <script
-    src="{{ asset('assets/vendor/flat-ui/dist/js/flat-ui.js') }}"></script>
-    <script
-    src="{{ asset('assets/vendor/angular/angular.js') }}"></script>
-    <script
-    src="{{ asset('assets/vendor/angular-deckgrid/angular-deckgrid.js') }}"></script>
-    
-    
-    <!-- Angular Controllers -->   
-    <script src="{{ asset('app/js/app.js') }}"></script>
-    <script src="{{ asset('app/js/register.js') }}"></script>
-    <script src="{{ asset('app/js/photo.js') }}"></script>
+   {% block body %}{% endblock %}
 
-    {% endblock %}
+   {% block javascripts %}
+   <!-- Vendor JS Assets -->
+   <script
+   src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/jquery.min.js') }}"></script>
+   <script
+   src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/respond.min.js') }}"></script>
+   <script
+   src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/html5shiv.js') }}"></script>
+   <script
+   src="{{ asset('assets/vendor/flat-ui/dist/js/flat-ui.js') }}"></script>
+   <script
+   src="{{ asset('assets/vendor/angular/angular.js') }}"></script>
+   <script
+   src="{{ asset('assets/vendor/angular-deckgrid/angular-deckgrid.js') }}"></script>
+   <script
+   src="{{ asset('assets/vendor/angular-leaflet-directive/dist/angular-leaflet-directive.js') }}"></script>
+   <script
+   src="{{ asset('assets/vendor/leaflet/dist/leaflet-src.js') }}"></script>
+
+   <!-- Angular Controllers -->   
+   <script src="{{ asset('app/js/app.js') }}"></script>
+   <script src="{{ asset('app/js/register.js') }}"></script>
+   <script src="{{ asset('app/js/photo.js') }}"></script>
+   <script src="{{ asset('app/js/map.js') }}"></script>
+
+   {% endblock %}
 </body>
 </html>

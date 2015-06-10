@@ -46,6 +46,16 @@ class Photo
      */
     private $file;
 
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $latitude;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $longitude;
+
 
     /**
      * Get id

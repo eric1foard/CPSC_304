@@ -12,13 +12,21 @@
 	{% include 'AppBundle:Modals:loginModal.html.twig' %}
 </div>
 
-<div ng-controller="PhotoCtrl">
+<div>
+
+<div ng-controller="MapCtrl" class="col-md-4">
+	<leaflet defaults="defaults" markers="markers" center="center" height="480px" width="100%"></leaflet>
+</div>
+
+<div ng-controller="PhotoCtrl"class="col-md-8">
 	<div deckgrid class="deckgrid" source="photos">
 		<div ng-style="{'border':'solid 10px'}" class="a-card">
 			
-				<img  src="" height="100%" width="100%" data-ng-src="[[card.value]]">
+			<img  src="" height="100%" width="100%" data-ng-src="[[card.value]]">
 			
 		</div>
 	</div>
+</div>
+
 </div>
 {% endblock %}
