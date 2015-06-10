@@ -50,8 +50,8 @@ class PhotoController extends Controller
         if ($form->isValid()) {
 
             $entity->setUser($this->get('security.token_storage')->getToken()->getUser());
-
             $entity->upload();
+            $entity->setUploadDate(date('Y-m-d'));
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
