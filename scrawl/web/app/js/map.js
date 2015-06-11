@@ -1,50 +1,59 @@
-//angular controller for angular-leaflet-directive
+//angular controller for angular-leaflet-directive homepage map
 
-app.controller('MapCtrl', ['$scope',
-	function($scope) {
-		angular.extend($scope, {
-			center: {
-				lat: 24.0391667,
-				lng: 121.525,
-				zoom: 6
-			},
-			markers: {
-				taipei: {
-					lat: 25.0391667,
-					lng: 121.525,
-				},
-				yangmei: {
-					lat: 24.9166667,
-					lng: 121.1333333
-				},
-				hsinchu: {
-					lat: 24.8047222,
-					lng: 120.9713889
-				},
-				miaoli: {
-					lat: 24.5588889,
-					lng: 120.8219444
-				},
-				tainan: {
-					lat: 22.9933333,
-					lng: 120.2036111
-				},
-				puzi: {
-					lat: 23.4611,
-					lng: 120.242
-				},
-				kaohsiung: {
-					lat: 22.6252777778,
-					lng: 120.3088888889
-				},
-				taitun: {
-					lat: 22.75,
-					lng: 121.15
-				}
-			}
+app.controller('MapCtrl', ['$scope', '$http',
+	function ($scope, $http) {
+
+		var geos = [];
+		$http.get('/ajax/latlon').success(function(data){
+
+			angular.forEach(data, function(value, key){
+				geos[key] = {
+					lat: value[0], 
+					lng: value[1],
+					focus: false,
+					icon: {}
+				};
+			});
+			$scope.geos = geos;
 		});
 
+
+		$scope.highlight = function(marker_id){
+
+			angular.forEach($scope.markers, function(value, key){
+				$scope.markers[key].icon = $scope.defaultIcon;
+			});
+
+			$scope.markers[marker_id].icon = $scope.awesomeMarkerIcon;
+		};
+
+		angular.extend($scope, {
+			center: {
+				autoDiscover: true,
+				lat: 37.760944207425936,
+				lng: -122.43850708007811,
+				zoom: 6
+			},
+			markers: geos,
+
+			defaultIcon: {},
+
+			awesomeMarkerIcon: {
+				type: 'awesomeMarker',
+				icon: 'star',
+				markerColor: 'red'
+			},
+			events: {
+				markers: {
+					enable: ['dragend']
+                // ,logic: 'emit'
+            }
+        }
+    });
+
 	}]);
+
+//angular controller for angular-leaflet-directive image upload map
 
 
 app.controller('MarkerCtrl', ['$scope',
@@ -73,12 +82,12 @@ app.controller('MarkerCtrl', ['$scope',
 				lng: 0
 			},
 			events: {
-            markers: {
-                enable: ['dragend']
+				markers: {
+					enable: ['dragend']
                 // ,logic: 'emit'
             }
         }
-		});
+    });
 
 		$scope.$on("leafletDirectiveMarker.dragend", function(event, args){
 			console.log("position updated");

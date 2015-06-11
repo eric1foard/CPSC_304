@@ -1,88 +1,105 @@
 <!DOCTYPE html>
 <html ng-app="Scrawl">
 <head>
-    <meta charset="UTF-8" />
-    <title>
-        {% block title %}Welcome!{% endblock %}
-    </title>
+  <meta charset="UTF-8" />
+  <title>
+    {% block title %}Welcome!{% endblock %}
+  </title>
 
-    {% block stylesheets %}
-    <!-- bootstrap -->
-    <link rel="stylesheet"
-    href="{{ asset('assets/vendor/bootstrap/dist/css/bootstrap.css') }}">
-    <!-- flat ui -->
-    <link rel="stylesheet"
-    href="{{ asset('assets/vendor/flat-ui/dist/css/flat-ui.css') }}">
-    <link rel="stylesheet"
-    href="{{ asset('assets/vendor/leaflet/dist/leaflet.css') }}">
-    <!-- custom css -->
-    <link rel="stylesheet"
-    href="{{ asset('/app/css/custom.css') }}">
+  {% block stylesheets %}
+  <!-- bootstrap -->
+  <link rel="stylesheet"
+  href="{{ asset('assets/vendor/bootstrap/dist/css/bootstrap.css') }}">
+  <!-- flat ui -->
+  <link rel="stylesheet"
+  href="{{ asset('assets/vendor/flat-ui/dist/css/flat-ui.css') }}">
+  <link rel="stylesheet"
+  href="{{ asset('assets/vendor/leaflet/dist/leaflet.css') }}">
+  <!-- custom css -->
+  <link rel="stylesheet"
+  href="{{ asset('/app/css/custom.css') }}">
+  <!-- leaflet markers -->
+  <link rel="stylesheet"
+  href="{{ asset('assets/vendor/awesome-markers/leaflet.awesome-markers.css') }}">
 
-    <!-- icons -->
-    <link rel="font/truetype"
-    href="{{ asset('assets/vendor/flat-ui/dist/fonts/glyphicons/flat-ui-icons-regular.ttf') }}">
-    <!-- fonts -->
-    <link rel="font/truetype"
-    href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-black.ttf') }}">
-    <link rel="font/truetype"
-    href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-bold.ttf') }}">
-    <link rel="font/truetype"
-    href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-bolditalic.ttf') }}">
-    <link rel="font/truetype"
-    href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-italic.ttf') }}">
-    <link rel="font/truetype"
-    href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-light.ttf') }}">
-    <link rel="font/truetype"
-    href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-regular.ttf') }}">
-    {% endblock %}
+  <!-- icons -->
+  <link rel="font/truetype"
+  href="{{ asset('assets/vendor/flat-ui/dist/fonts/glyphicons/flat-ui-icons-regular.ttf') }}">
+  <!-- awesome marker icons -->
+  <link rel="icon" type="image/x-icon" href="{{ asset('assets/vendor/awesome-markers/markers-shadow.png') }}" />
+  <link rel="icon" type="image/x-icon" href="{{ asset('assets/vendor/awesome-markers/markers-soft.png') }}" />
 
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+  <!-- fonts -->
+  <link rel="font/truetype"
+  href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-black.ttf') }}">
+  <link rel="font/truetype"
+  href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-bold.ttf') }}">
+  <link rel="font/truetype"
+  href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-bolditalic.ttf') }}">
+  <link rel="font/truetype"
+  href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-italic.ttf') }}">
+  <link rel="font/truetype"
+  href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-light.ttf') }}">
+  <link rel="font/truetype"
+  href="{{ asset('assets/vendor/flat-ui/dist/fonts/lato/lato-regular.ttf') }}">
+
+  <!-- fontawesome for custom leaflet marker icons -->
+  <link rel="stylesheet"
+  href="{{ asset('/asset/vendor/font-awesome/css/font-awesome.min.css') }}">
+
+
+
+  {% endblock %}
+
+  <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 </head>
 
 <body>
-    {% block alerts %}
-    {% for flashMessage in app.session.flashbag.get('notice') %}
-    <div class="alert alert-success alert-dismissable" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true" >×</button>
-        <strong>Success!</strong> {{ flashMessage }}
-    </div>
-    {% endfor %}
-    {% for flashMessage in app.session.flashbag.get('error') %}
-    <div class="alert alert-danger alert-dismissable" role="alert">
-       <button type="button" class="close" data-dismiss="alert" aria-hidden="true" >×</button>
-       <strong>Error!</strong> {{ flashMessage }}
-   </div>
-   {% endfor %}
-   {% endblock %}
+  {% block alerts %}
+  {% for flashMessage in app.session.flashbag.get('notice') %}
+  <div class="alert alert-success alert-dismissable" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true" >×</button>
+    <strong>Success!</strong> {{ flashMessage }}
+  </div>
+  {% endfor %}
+  {% for flashMessage in app.session.flashbag.get('error') %}
+  <div class="alert alert-danger alert-dismissable" role="alert">
+   <button type="button" class="close" data-dismiss="alert" aria-hidden="true" >×</button>
+   <strong>Error!</strong> {{ flashMessage }}
+ </div>
+ {% endfor %}
+ {% endblock %}
 
-   {% block body %}{% endblock %}
+ {% block body %}{% endblock %}
 
-   {% block javascripts %}
-   <!-- Vendor JS Assets -->
-   <script
-   src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/jquery.min.js') }}"></script>
-   <script
-   src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/respond.min.js') }}"></script>
-   <script
-   src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/html5shiv.js') }}"></script>
-   <script
-   src="{{ asset('assets/vendor/flat-ui/dist/js/flat-ui.js') }}"></script>
-   <script
-   src="{{ asset('assets/vendor/angular/angular.js') }}"></script>
-   <script
-   src="{{ asset('assets/vendor/angular-deckgrid/angular-deckgrid.js') }}"></script>
-   <script
-   src="{{ asset('assets/vendor/leaflet/dist/leaflet-src.js') }}"></script>
-      <script
-   src="{{ asset('assets/vendor/angular-leaflet-directive/dist/angular-leaflet-directive.js') }}"></script>
+ {% block javascripts %}
+ <!-- Vendor JS Assets -->
+ <script
+ src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/jquery.min.js') }}"></script>
+ <script
+ src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/respond.min.js') }}"></script>
+ <script
+ src="{{ asset('assets/vendor/flat-ui/dist/js/vendor/html5shiv.js') }}"></script>
+ <script
+ src="{{ asset('assets/vendor/flat-ui/dist/js/flat-ui.js') }}"></script>
+ <script
+ src="{{ asset('assets/vendor/angular/angular.js') }}"></script>
+ <script
+ src="{{ asset('assets/vendor/angular-deckgrid/angular-deckgrid.js') }}"></script>
+ <script
+ src="{{ asset('assets/vendor/leaflet/dist/leaflet-src.js') }}"></script>
+ <script
+ src="{{ asset('assets/vendor/angular-leaflet-directive/dist/angular-leaflet-directive.js') }}"></script>
+ <script
+ src="{{ asset('assets/vendor/awesome-markers/leaflet.awesome-markers.js') }}"></script>
 
-   <!-- Angular Controllers -->   
-   <script src="{{ asset('app/js/app.js') }}"></script>
-   <script src="{{ asset('app/js/register.js') }}"></script>
-   <script src="{{ asset('app/js/photo.js') }}"></script>
-   <script src="{{ asset('app/js/map.js') }}"></script>
+ <!-- Angular Controllers -->   
+ <script src="{{ asset('app/js/app.js') }}"></script>
+ <script src="{{ asset('app/js/register.js') }}"></script>
+ <script src="{{ asset('app/js/photo.js') }}"></script>
+ <script src="{{ asset('app/js/map.js') }}"></script>
 
-   {% endblock %}
+ {% endblock %}
 </body>
 </html>

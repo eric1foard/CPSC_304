@@ -19,7 +19,8 @@
     "bootstrap": "~3.3.4",
     "angular": "~1.4.0",
     "angular-deckgrid": "~0.5.0",
-    "angular-leaflet-directive": "~0.8.2"
+    "angular-leaflet-directive": "~0.8.2",
+    "fontawesome": "~4.3.0"
   },
   "resolutions": {
     "angular": "~1.4.0"

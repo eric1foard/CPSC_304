@@ -251,4 +251,19 @@ class PhotoController extends Controller
         }
         return new JsonResponse($paths);
     }
+
+    //return all latlons to display map markers
+    public function getLatLonsAction()
+    {
+        $geos = array();
+
+        $em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('AppBundle:Photo')->findAll();
+
+        foreach ($entities as $entity) {
+            $geos[$entity->getID()] = [$entity->getLatitude(), $entity->getLongitude()];
+        }
+        return new JsonResponse($geos);
+
+    }
 }
