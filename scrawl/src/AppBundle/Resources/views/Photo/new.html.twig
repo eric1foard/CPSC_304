@@ -1,15 +1,39 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Photo creation</h1>
+<h1>Photo creation</h1>
 
-    {{ form(form) }}
+<div ng-controller="MarkerCtrl" class="col-md-4">
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('photo') }}">
-            Back to the list
-        </a>
-    </li>
+
+	<p>Actual marker position (lat/lng): <strong  ng-bind="position.lat"></strong> / <strong ng-bind="position.lng"></strong></p>
+
+	<p>start form</p>
+
+	{{ form_start(form) }}
+
+	{{ form_label(form.file) }}
+	{{ form_errors(form.file) }}
+	{{ form_widget(form.file) }}
+
+	{{ form_row(form.latitude, {'attr':{'ng-model':'position.lat'}}) }}
+	{{ form_row(form.longitude, {'attr':{'ng-model':'position.lng'}}) }}
+
+<!-- 	<input type="number" id="form_latitude" name="form[latitude]" ng-bind="position.lat" value="[[position.lat]]" />
+	<input type="number" id="form_longitude" name="form[longitude]" ng-bind="position.lng" value="[[position.lng]]" /> -->
+
+	{{ form_end(form) }}
+
+
+	<leaflet defaults="defaults" center="london" event-broadcast="events"markers="markers" height="480px" width="100%"></leaflet>
+
+</div>
+
+<ul class="record_actions">
+	<li>
+		<a href="{{ path('photo') }}">
+			Back to the list
+		</a>
+	</li>
 </ul>
 {% endblock %}

@@ -3,25 +3,50 @@ body {
 }
 
 .navbar-default {
-  background-color: #95a5a6;
+	background-color: #95a5a6;
 }
 
 .navbar-default .navbar-toggle:before {
-  color: #2c3e50;
+	color: #2c3e50;
 }
 
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
-  color: #d35400;
-  background-color: transparent;
+	color: #d35400;
+	background-color: transparent;
 }
 
 .navbar-default .navbar-item:hover,
 .navbar-default .navbar-item:focus {
-  color: #d35400;
-  background-color: transparent;
+	color: #d35400;
+	background-color: transparent;
 }
 
+.deckgrid[deckgrid]::before {
+	/* Specifies that the grid should have a maximum of 4 columns. Each column will have the classes 'column' and 'column-1-4' */
+	content: '4 .column.column-1-4';
+	font-size: 0; /* See https://github.com/akoenig/angular-deckgrid/issues/14#issuecomment-35728861 */
+	visibility: hidden;
+
+}
+
+.deckgrid .column {
+	float: left;
+}
+
+.deckgrid .column-1-4 {
+	width: 25%;
+}
+
+.deckgrid .column-1-1 {
+	width: 100%;
+}
+
+@media screen and (max-width: 480px){
+	.deckgrid[deckgrid]::before {
+		content: '1 .column.column-1-1';
+	}
+}
 
 
 
