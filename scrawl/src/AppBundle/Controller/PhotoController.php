@@ -77,11 +77,11 @@ class PhotoController extends Controller
     /**
     * Helper to save geolocation based on lat/long entry in Photo form
     **/
-    private function persistGeolocationForPhoto(Photo $entity)
+    private function persistGeolocationForPhoto($entity)
     {
         $geolocation = new Geolocation();
-        $geolocation->setLatitude($entity->getLatitude);
-        $geolocation->setLongitude($this->$entity->getLongitude);
+        $geolocation->setLatitude($entity->getLatitude());
+        $geolocation->setLongitude($entity->getLongitude());
 
         // make call to Google API to populate other geolocation fields given lat, long
 
