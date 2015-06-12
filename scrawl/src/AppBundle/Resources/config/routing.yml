@@ -139,3 +139,35 @@ photo_show:
 upload:
     path:     /upload
     defaults: {_controller: AppBundle:Photo:upload }
+
+#################################
+##         Geolocations        ##
+#################################
+
+geolocation:
+    path:     /geolocations
+    defaults: {_controller: AppBundle:Geolocation:index }
+
+geolocation_new:
+    path:   /geolocation/new
+    defaults: { _controller: AppBundle:Geolocation:new }
+
+geolocation_create:
+    path:   /geolocation/create
+    defaults: { _controller: AppBundle:Geolocation:create }
+
+geolocation_edit:
+    path:   /geolocation/edit/{id}
+    defaults: {_controller: AppBundle:Geolocation:edit }
+
+geolocation_update:
+    path:   /geolocation/update/{id}
+    defaults: {_controller: AppBundle:Geolocation:update }
+
+geolocation_delete:
+    path:   /geolocation/delete/{id}
+    defaults: {_controller: AppBundle:Geolocation:delete }
+
+geolocation_show:
+    path:   /geolocation/{id}
+    defaults: {_controller: AppBundle:Geolocation:show }
