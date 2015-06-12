@@ -7,6 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Photo;
 use AppBundle\Form\PhotoType;
+use AppBundle\Entity\Geolocation;
+use AppBundle\Form\GeolocationType;
+use AppBundle\Controller\GeolocationController;
 
 /**
  * Photo controller.
@@ -94,12 +97,18 @@ class PhotoController extends Controller
      */
     public function newAction()
     {
-        $entity = new Photo();
-        $form   = $this->createCreateForm($entity);
+        $photoEntity = new Photo();
+        $photoForm   = $this->createCreateForm($photoEntity);
+
+        $geolocationEntity = new Photo();
+//        $geolocationForm   = $this->get('geolocation_service')->createCreateForm($geolocationEntity);
+        $geolocationForm  = $this->createCreateForm($photoEntity);
 
         return $this->render('AppBundle:Photo:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+            'entity' => $photoEntity,
+            'form'   => $photoForm->createView(),
+            'geolocationEntity' => $geolocationEntity,
+            'geolocationForm' => $geolocationForm->createView()
             ));
     }
 

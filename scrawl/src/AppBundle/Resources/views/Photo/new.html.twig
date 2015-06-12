@@ -24,6 +24,13 @@
 
 	{{ form_end(form) }}
 
+	<p></p>
+	<p>Placeholder for Geolocation form (lat, long) -- currently a duplicate of the Photo lat, long</p>
+	{{form_start(geolocationForm)}}
+	{{form_label(geolocationForm.latitude)}}
+	{{form_label(geolocationForm.longitude)}}
+	{{form_end(geolocationForm)}}
+
 
 	<leaflet defaults="defaults" center="london" event-broadcast="events"markers="markers" height="480px" width="100%"></leaflet>
 
