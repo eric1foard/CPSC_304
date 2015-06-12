@@ -7,6 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Photo;
 use AppBundle\Form\PhotoType;
+use AppBundle\Entity\Geolocation;
+use AppBundle\Form\GeolocationType;
+use AppBundle\Controller\GeolocationController;
 
 /**
  * Photo controller.
@@ -49,6 +52,8 @@ class PhotoController extends Controller
 
         if ($form->isValid()) {
 
+            $this->persistGeolocationForPhoto($entity);
+
             $entity->setUser($this->get('security.token_storage')->getToken()->getUser());
             $entity->upload();
             $entity->setUploadDate(date('Y-m-d'));
@@ -67,6 +72,25 @@ class PhotoController extends Controller
         ->add('error','oops! something went wrong. Try again!');
 
         return $this->redirectToRoute('homepage');
+    }
+
+    /**
+    * Helper to save geolocation based on lat/long entry in Photo form
+    **/
+    private function persistGeolocationForPhoto(Photo $entity)
+    {
+        $geolocation = new Geolocation();
+        $geolocation->setLatitude($entity->getLatitude);
+        $geolocation->setLongitude($this->$entity->getLongitude);
+
+        // make call to Google API to populate other geolocation fields given lat, long
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($geolocation);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()
+        ->add('notice','photo geolocation successfully saved!');
     }
 
     /**
@@ -94,12 +118,18 @@ class PhotoController extends Controller
      */
     public function newAction()
     {
-        $entity = new Photo();
-        $form   = $this->createCreateForm($entity);
+        $photoEntity = new Photo();
+        $photoForm   = $this->createCreateForm($photoEntity);
+
+        $geolocationEntity = new Photo();
+//        $geolocationForm   = $this->get('geolocation_service')->createCreateForm($geolocationEntity);
+        $geolocationForm  = $this->createCreateForm($photoEntity);
 
         return $this->render('AppBundle:Photo:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+            'entity' => $photoEntity,
+            'form'   => $photoForm->createView(),
+            'geolocationEntity' => $geolocationEntity,
+            'geolocationForm' => $geolocationForm->createView()
             ));
     }
 
