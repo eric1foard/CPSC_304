@@ -80,10 +80,15 @@ class PhotoController extends Controller
     private function persistGeolocationForPhoto(Photo $entity)
     {
         $geolocation = new Geolocation();
-        $geolocation->setLatitude($entity->getLatitude);
-        $geolocation->setLongitude($this->$entity->getLongitude);
+        //$geolocation->setLatitude($entity->getLatitude);
+        //$geolocation->setLongitude($this->$entity->getLongitude);
 
         // make call to Google API to populate other geolocation fields given lat, long
+        $curl = new \Ivory\HttpAdapter\CurlHttpAdapter();
+        $geocoder = new \Geocoder\Provider\GoogleMaps($curl);
+
+        $geocoder->reverse($this->$entity->getLatitude, $this->$entity->getLongitude);
+        //TODO create the rest of the geocoder entity
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($geolocation);
