@@ -41,12 +41,12 @@ class Geolocation
     private $city;
 
     /**
-     * @ORM\Column(type="float", unique=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $latitude;
 
     /**
-     * @ORM\Column(type="float", unique=true)
+     * @ORM\Column(type="float", nullable=true)
      */
     private $longitude;
 
