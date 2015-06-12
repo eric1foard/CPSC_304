@@ -52,6 +52,8 @@ class PhotoController extends Controller
 
         if ($form->isValid()) {
 
+            $this->persistGeolocationForPhoto($entity);
+
             $entity->setUser($this->get('security.token_storage')->getToken()->getUser());
             $entity->upload();
             $entity->setUploadDate(date('Y-m-d'));
@@ -70,6 +72,25 @@ class PhotoController extends Controller
         ->add('error','oops! something went wrong. Try again!');
 
         return $this->redirectToRoute('homepage');
+    }
+
+    /**
+    * Helper to save geolocation based on lat/long entry in Photo form
+    **/
+    private function persistGeolocationForPhoto(Photo $entity)
+    {
+        $geolocation = new Geolocation();
+        $geolocation->setLatitude($entity->getLatitude);
+        $geolocation->setLongitude($this->$entity->getLongitude);
+
+        // make call to Google API to populate other geolocation fields given lat, long
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($geolocation);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()
+        ->add('notice','photo geolocation successfully saved!');
     }
 
     /**
