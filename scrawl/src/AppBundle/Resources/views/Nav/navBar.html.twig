@@ -21,6 +21,22 @@
       <li ><a href="{{ path('logout') }}">Logout</a></li>
       {% endif %}
 
+      {% if is_granted('ROLE_ADMIN') %}
+      <div class="btn-group pull-right">
+        <button class="btn btn-inverse dropdown-toggle" type="button" data-toggle="dropdown">
+          Manage <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-inverse" role="menu">
+          <li><a href="{{ path('user') }}">Users</a></li>
+          <li class="divider"></li>
+          <li><a href="{{ path('photo') }}">Photos</a></li>
+          <li class="divider"></li>
+          <li><a href="{{ path('tag') }}">Tags</a></li>
+          
+        </ul>
+      </div>
+      {% endif %}
+
     </ul>
     <form class="navbar-form navbar-right" action="#" role="search">
       <div class="form-group">
