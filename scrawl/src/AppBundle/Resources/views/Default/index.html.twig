@@ -26,7 +26,9 @@
 				
 				<div ng-style="{'border':'solid 10px'}" class="a-card" ng-attr="[[card.key]]">
 
-					<img href="#" ng-click="mother.highlight([[card.key]])" 
+					<img 
+					ng-mouseover="mother.highlight([[card.key]])"
+					ng-click="mother.getArtInfo([[card.key]])"
 					height="100%" width="100%" data-ng-src="[[card.value]]">
 
 				</div>
@@ -35,5 +37,28 @@
 
 	</div>
 
+</div>
+
+
+<!-- render modal displaying the photo and info on click of photo -->
+<div ng-controller="PhotoCtrl">
+	<script type="text/ng-template" id="modal.html">
+	<div class="modal-header">
+	<h3 class="modal-title"><p>[[artInfo.latitude]]</p></h3>
+	</div>
+	<div class="modal-body">
+	<h4>date</h4>
+	<p>[[artInfo.uploadDate]]</p>
+	<h4>longitude</h4>
+	<p>[[artInfo.longitude]]</p> 
+
+	<img 
+	height="100%" width="100%" data-ng-src="[[artInfo.path]]">
+
+	</div>
+	<div class="modal-footer">
+	<button class="btn btn-warning" ng-click="cancel()">Close</button>
+	</div>
+	</script>
 </div>
 {% endblock %}

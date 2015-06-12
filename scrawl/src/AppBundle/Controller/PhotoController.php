@@ -266,4 +266,25 @@ class PhotoController extends Controller
         return new JsonResponse($geos);
 
     }
+
+    //consumes a photo id and produces a JSON representation of the Photo object
+    public function getArtAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $photo = $em->getRepository('AppBundle:Photo')->find($id);
+
+        $photoInfo = array(
+            "id" => $photo->getId(),
+            "latitude" => $photo->getLatitude(),
+            "longitude" => $photo->getLongitude(),
+            "path" => $photo->getWebPath()
+            );
+
+        return new JsonResponse($photoInfo);
+    }
+
+
+
+
+
 }

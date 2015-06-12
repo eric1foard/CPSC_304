@@ -46,7 +46,7 @@
 
   <!-- fontawesome for custom leaflet marker icons -->
   <link rel="stylesheet"
-  href="{{ asset('/asset/vendor/font-awesome/css/font-awesome.min.css') }}">
+  href="{{ asset('assets/vendor/font-awesome/css/font-awesome.min.css') }}">
 
 
 
@@ -93,12 +93,15 @@
  src="{{ asset('assets/vendor/angular-leaflet-directive/dist/angular-leaflet-directive.js') }}"></script>
  <script
  src="{{ asset('assets/vendor/awesome-markers/leaflet.awesome-markers.js') }}"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.js"></script>
+ 
 
  <!-- Angular Controllers -->   
  <script src="{{ asset('app/js/app.js') }}"></script>
  <script src="{{ asset('app/js/register.js') }}"></script>
  <script src="{{ asset('app/js/photo.js') }}"></script>
  <script src="{{ asset('app/js/map.js') }}"></script>
+ <script src="{{ asset('app/js/marker.js') }}"></script>
 
  {% endblock %}
 </body>

@@ -18,6 +18,11 @@ ajax_latlon:
     path:     /ajax/latlon
     defaults: {_controller: AppBundle:Photo:getLatLons }
 
+ajax_photo:
+    path:     /ajax/photo/{id}
+    defaults: {_controller: AppBundle:Photo:getArt }
+
+
 
 #################################
 ##            Security         ##
