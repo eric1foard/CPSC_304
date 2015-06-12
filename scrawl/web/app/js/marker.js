@@ -6,25 +6,25 @@ app.controller('MarkerCtrl', ['$scope',
 	{
 
 		var mainMarker = {
-			lat: 51,
-			lng: 0,
+			lat: 49.28505157127188,
+			lng: -123.13133239746094,
 			focus: true,
 			message: "drag me to select art location",
 			draggable: true
 		};
 
 		angular.extend($scope, {
-			london: {
-				lat: 51.505,
-				lng: -0.09,
+			vancouver: {
+				lat: 49.28505157127188,
+				lng: -123.13133239746094,
 				zoom: 8
 			},
 			markers: {
 				mainMarker: angular.copy(mainMarker)
 			},
 			position: {
-				lat: 51,
-				lng: 0
+				lat: 49.28505157127188,
+				lng: -123.13133239746094
 			},
 			events: {
 				markers: {
