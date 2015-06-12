@@ -45,7 +45,7 @@ logout:
 #################################
 
 user:
-    path:     /users
+    path:     /admin/users
     defaults: {_controller: AppBundle:User:index }
 
 user_new:
@@ -77,27 +77,27 @@ user_show:
 #################################
 
 tag:
-    path:     /tags
+    path:     /admin/tags
     defaults: {_controller: AppBundle:Tag:index }
 
 tag_new:
-    path:   /tag/new
+    path:   /admin/tag/new
     defaults: { _controller: AppBundle:Tag:new }
 
 tag_create:
-    path:   /tag/create
+    path:   /admin/tag/create
     defaults: { _controller: AppBundle:Tag:create }
 
 tag_edit:
-    path:   /tag/edit/{id}
+    path:   /admin/tag/edit/{id}
     defaults: {_controller: AppBundle:Tag:edit }
 
 tag_update:
-    path:   /tag/update/{id}
+    path:   /admin/tag/update/{id}
     defaults: {_controller: AppBundle:Tag:update }
 
 tag_delete:
-    path:   /tag/delete/{id}
+    path:   /admin/tag/delete/{id}
     defaults: {_controller: AppBundle:Tag:delete }
 
 tag_show:
@@ -109,7 +109,7 @@ tag_show:
 #################################
 
 photo:
-    path:     /photos
+    path:     /admin/photos
     defaults: {_controller: AppBundle:Photo:index }
 
 photo_new:

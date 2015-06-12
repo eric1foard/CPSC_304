@@ -144,6 +144,7 @@ class UserController extends Controller
     public function editAction($id)
     {
         $loggedIn = $this->get('security.token_storage')->getToken()->getUser();
+        
         if (!$this->canUpdateOrDelete($loggedIn, $id))
         {
             $this->get('session')->getFlashBag()
