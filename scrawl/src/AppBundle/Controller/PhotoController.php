@@ -200,12 +200,9 @@ class PhotoController extends Controller
             throw $this->createNotFoundException('Unable to find Photo entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('AppBundle:Photo:show.html.twig', array(
             'entity'         => $entity,
             'uploadLocation' => $uploadLocation,
-            'delete_form'    => $deleteForm->createView(),
             ));
     }
 
@@ -224,12 +221,10 @@ class PhotoController extends Controller
         }
 
         $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('AppBundle:Photo:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
             ));
     }
 
@@ -265,7 +260,6 @@ class PhotoController extends Controller
             throw $this->createNotFoundException('Unable to find Photo entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
 
@@ -278,29 +272,24 @@ class PhotoController extends Controller
         return $this->render('AppBundle:Photo:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
             ));
     }
     /**
      * Deletes a Photo entity.
      *
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
+        $sql = 'DELETE FROM scrawl_photos WHERE id=?';
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('AppBundle:Photo')->find($id);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Photo entity.');
-            }
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
 
-            $em->remove($entity);
-            $em->flush();
-        }
+        //execute query
+        $stmt->execute();
 
         return $this->redirect($this->generateUrl('photo'));
     }
@@ -312,15 +301,6 @@ class PhotoController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-        ->setAction($this->generateUrl('photo_delete', array('id' => $id)))
-        ->setMethod('DELETE')
-        ->add('submit', 'submit', array('label' => 'Delete'))
-        ->getForm()
-        ;
-    }
 
     //create a JSON response to ajaxly return all photo
     //filepaths so that we can render photos with ng-repeat

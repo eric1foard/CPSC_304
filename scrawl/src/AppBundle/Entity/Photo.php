@@ -56,6 +56,12 @@ class Photo
      */
     private $longitude;
 
+    /** @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="photos")
+    *   @ORM\JoinTable(name="has_tag")
+    */
+    private $tags;
+
+
 
     /**
      * Get id
@@ -226,6 +232,7 @@ class Photo
         return 'uploads';
     }
 
+
     /**
      * Set latitude
      *
@@ -270,5 +277,46 @@ class Photo
     public function getLongitude()
     {
         return $this->longitude;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add tags
+     *
+     * @param \AppBundle\Entity\Tag $tags
+     * @return Photo
+     */
+    public function addTag(\AppBundle\Entity\Tag $tags)
+    {
+        $this->tags[] = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Remove tags
+     *
+     * @param \AppBundle\Entity\Tag $tags
+     */
+    public function removeTag(\AppBundle\Entity\Tag $tags)
+    {
+        $this->tags->removeElement($tags);
+    }
+
+    /**
+     * Get tags
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTags()
+    {
+        return $this->tags;
     }
 }

@@ -267,4 +267,40 @@ class User implements UserInterface, \Serializable
     {
         return $this->photos;
     }
+
+    /**
+     * Set role
+     *
+     * @param string $role
+     * @return User
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get role
+     *
+     * @return string 
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     * @return User
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+
+        return $this;
+    }
 }
