@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Photo;
 use AppBundle\Form\PhotoType;
+use AppBundle\Entity\Geolocation;
 
 /**
  * Photo controller.
@@ -56,6 +57,8 @@ class PhotoController extends Controller
 
         if ($form->isValid()) {
 
+            $this->persistGeolocationForPhoto($entity);
+
             $entity->upload($this->getLoggedInUser());
 
             $sql = 'INSERT INTO scrawl_photos value(:id, :user_id, :path, :uploadDate, :latitude, :longitude)';
@@ -63,7 +66,7 @@ class PhotoController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('id', 125);
+            $stmt->bindValue('id', 127);
             $stmt->bindValue('user_id', $this->getLoggedInUser());
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
@@ -77,13 +80,34 @@ class PhotoController extends Controller
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => 125)));
+            return $this->redirect($this->generateUrl('photo_show', array('id' => 127)));
         }
 
         $this->get('session')->getFlashBag()
         ->add('error','oops! something went wrong. Try again!');
 
         return $this->redirectToRoute('homepage');
+    }
+
+    /**
+    * Helper to save geolocation based on lat/long entry in Photo form
+    **/
+    private function persistGeolocationForPhoto($entity)
+    {
+        $geolocation = new Geolocation();
+        
+        $geolocation->setLatitude($entity->getLatitude());
+        $geolocation->setLongitude($entity->getLongitude());
+        // make call to Google API to populate other geolocation fields given lat, long
+        // $curl = new \Ivory\HttpAdapter\CurlHttpAdapter();
+        // $geocoder = new \Geocoder\Provider\GoogleMaps($curl);
+        // $geocoder->reverse($entity->getLatitude(), $entity->getLongitude());
+        //TODO create the rest of the geocoder entity
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($geolocation);
+        $em->flush();
+        $this->get('session')->getFlashBag()
+        ->add('notice','photo geolocation successfully saved!');
     }
 
 

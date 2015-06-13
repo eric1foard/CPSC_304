@@ -21,37 +21,37 @@ class Geolocation
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=10, unique=true)
+     * @ORM\Column(type="string", length=10, unique=true, nullable=true)
      */
     private $postalCode;
 
     /**
-     * @ORM\Column(type="string", length=20, unique=false)
+     * @ORM\Column(type="string", length=20, unique=false, nullable=true)
      */
     private $country;
 
     /**
-     * @ORM\Column(type="string", length=20, unique=false)
+     * @ORM\Column(type="string", length=20, unique=false, nullable=true)
      */
     private $region;
 
     /**
-     * @ORM\Column(type="string", length=20, unique=false)
+     * @ORM\Column(type="string", length=20, unique=false, nullable=true)
      */
     private $city;
 
     /**
-     * @ORM\Column(type="float", nullable=true)
+     * @ORM\Column(type="float", nullable=false)
      */
     private $latitude;
 
     /**
-     * @ORM\Column(type="float", nullable=true)
+     * @ORM\Column(type="float", nullable=false)
      */
     private $longitude;
 
     /**
-     * @ORM\Column(type="string", length=30, unique=false)
+     * @ORM\Column(type="string", length=30, unique=false, nullable=true)
      */
     private $streetAddress;
 
