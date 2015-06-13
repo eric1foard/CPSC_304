@@ -21,9 +21,16 @@ class GeolocationController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_geolocation';
 
-        $entities = $em->getRepository('AppBundle:Geolocation')->findAll();
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //execute query
+        $stmt->execute();
+
+        //get all rows of results 
+        $entities = $stmt->fetchAll();
 
         return $this->render('AppBundle:Geolocation:index.html.twig', array(
             'entities' => $entities,
@@ -40,11 +47,28 @@ class GeolocationController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+            $sql = 'INSERT INTO scrawl_geolocation 
+                    value(:id, :postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
 
-            return $this->redirect($this->generateUrl('geolocation_show', array('id' => $entity->getId())));
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            $stmt->bindValue('id', 129);
+            $stmt->bindValue('postalCode', $form["postalCode"]->getData());
+            $stmt->bindValue('country', $form["country"]->getData());
+            $stmt->bindValue('region', $form["region"]->getData());
+            $stmt->bindValue('region', $form["city"]->getData());
+            $stmt->bindValue('latitude', $form["latitude"]->getData());
+            $stmt->bindValue('longitude', $form["longitude"]->getData());
+            $stmt->bindValue('region', $form["streetAddress"]->getData());
+
+            //execute query
+            $stmt->execute();
+
+            $this->get('session')->getFlashBag()
+            ->add('notice','photo location successfully saved!');
+
+            return $this->redirect($this->generateUrl('geolocation_show', array('id' => 129)));
         }
 
         return $this->render('AppBundle:Geolocation:new.html.twig', array(
@@ -93,9 +117,18 @@ class GeolocationController extends Controller
      */
     public function showAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_photos s WHERE s.id=?';
 
-        $entity = $em->getRepository('AppBundle:Geolocation')->find($id);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
+
+        $stmt->execute();
+
+        //get only row of result
+        $entity = $stmt->fetch();
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Geolocation entity.');

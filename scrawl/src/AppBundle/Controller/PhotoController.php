@@ -66,7 +66,7 @@ class PhotoController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('id', 127);
+            $stmt->bindValue('id', 128);
             $stmt->bindValue('user_id', $this->getLoggedInUser());
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
@@ -80,7 +80,7 @@ class PhotoController extends Controller
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => 127)));
+            return $this->redirect($this->generateUrl('photo_show', array('id' => 128)));
         }
 
         $this->get('session')->getFlashBag()
@@ -94,20 +94,32 @@ class PhotoController extends Controller
     **/
     private function persistGeolocationForPhoto($entity)
     {
-        $geolocation = new Geolocation();
-        
-        $geolocation->setLatitude($entity->getLatitude());
-        $geolocation->setLongitude($entity->getLongitude());
         // make call to Google API to populate other geolocation fields given lat, long
         // $curl = new \Ivory\HttpAdapter\CurlHttpAdapter();
         // $geocoder = new \Geocoder\Provider\GoogleMaps($curl);
         // $geocoder->reverse($entity->getLatitude(), $entity->getLongitude());
         //TODO create the rest of the geocoder entity
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($geolocation);
-        $em->flush();
+
+        $sql = 'INSERT INTO scrawl_geolocation 
+                value(:id, :postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
+        
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        $stmt->bindValue('id', 200);
+        $stmt->bindValue('postalCode', 'null');
+        $stmt->bindValue('country', 'null');
+        $stmt->bindValue('region', 'null');
+        $stmt->bindValue('city', 'null');
+        $stmt->bindValue('latitude', $entity->getLatitude());
+        $stmt->bindValue('longitude', $entity->getLongitude());
+        $stmt->bindValue('streetAddress', 'null');
+
+        //execute query
+        $stmt->execute();
+
         $this->get('session')->getFlashBag()
-        ->add('notice','photo geolocation successfully saved!');
+        ->add('notice','photo location successfully saved!');
     }
 
 
