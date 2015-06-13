@@ -11,6 +11,8 @@
             Back to the list
         </a>
     </li>
-    <li>{{ form(delete_form) }}</li>
+    <a href="{{ path('photo_delete', { 'id': entity.id }) }}">
+            Delete
+        </a>
 </ul>
 {% endblock %}
