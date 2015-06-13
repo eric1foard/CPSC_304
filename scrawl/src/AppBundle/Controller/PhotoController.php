@@ -21,9 +21,16 @@ class PhotoController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_photos';
 
-        $entities = $em->getRepository('AppBundle:Photo')->findAll();
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //execute query
+        $stmt->execute();
+
+        //get all rows of results 
+        $entities = $stmt->fetchAll();
 
         return $this->render('AppBundle:Photo:index.html.twig', array(
             'entities' => $entities,
@@ -57,7 +64,7 @@ class PhotoController extends Controller
             $em->persist($entity);
             $em->flush();
 
-                        $this->get('session')->getFlashBag()
+            $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
             return $this->redirect($this->generateUrl('photo_show', array('id' => $entity->getId())));
@@ -109,9 +116,23 @@ class PhotoController extends Controller
      */
     public function showAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('AppBundle:Photo')->find($id);
+        $sql = 'SELECT * FROM scrawl_photos s WHERE s.id=?';
+
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
+
+        //execute query
+        $stmt->execute();
+
+        //get only row of result
+        $entity = $stmt->fetch();
+
+        //pass upload dir to view to use as img src
+        $uploadLocation = 'uploads/'.$entity['path'];
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Photo entity.');
@@ -120,8 +141,9 @@ class PhotoController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('AppBundle:Photo:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            'entity'         => $entity,
+            'uploadLocation' => $uploadLocation,
+            'delete_form'    => $deleteForm->createView(),
             ));
     }
 
@@ -282,9 +304,4 @@ class PhotoController extends Controller
 
         return new JsonResponse($photoInfo);
     }
-
-
-
-
-
 }
