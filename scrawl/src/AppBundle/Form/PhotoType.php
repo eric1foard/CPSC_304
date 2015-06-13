@@ -18,7 +18,10 @@ class PhotoType extends AbstractType
             ->add('path')
             ->add('uploadDate')
             ->add('file')
-        ;
+            ->add('tag', 'entity', array(
+                'tags' => 'AppBundle:Tag',
+                'property' => 'tagName',
+                ));
     }
     
     /**

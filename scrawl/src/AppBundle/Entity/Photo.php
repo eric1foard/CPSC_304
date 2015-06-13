@@ -46,6 +46,12 @@ class Photo
      */
     private $file;
 
+    /**
+    * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="photos")
+    * @ORM\JoinTable(name="has_tag")
+    */
+    private $tags;
+
 
     /**
      * Get id
@@ -213,4 +219,34 @@ class Photo
         // when displaying uploaded doc/image in the view.
         return 'uploads';
     }
+
+
+
+
+    /**
+     * get tags
+     *
+     * @return string
+     */
+    public function getTags()
+    {
+
+
+        return $this->tags;
+    }
+
+    public function setTags()
+    {
+
+
+
+
+
+
+    }
+
+
+
+
+
 }

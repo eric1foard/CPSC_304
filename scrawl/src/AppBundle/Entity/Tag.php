@@ -24,6 +24,14 @@ class Tag
      */
 	 private $tagName;
 
+     /**
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", mappedBy="tags")
+     */
+     private $photos;
+     
+
+
+
 
     /**
      * Get id
