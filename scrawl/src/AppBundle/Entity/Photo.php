@@ -160,7 +160,9 @@ class Photo
     }
 
 
-    public function upload()
+    //performs the image upload to the web/uploads folder
+    //and sets the path property based on $user_id
+    public function upload($user_id)
     {
     // the file property can be empty if the field is not required
         if (null === $this->getFile()) {
@@ -175,11 +177,11 @@ class Photo
     // target filename to move to
         $this->getFile()->move(
             $this->getUploadRootDir(),
-            $this->getFile()->getClientOriginalName()
+            $user_id.'_'.$this->getFile()->getClientOriginalName()
             );
 
     // set the path property to the filename where you've saved the file
-        $this->path = $this->getFile()->getClientOriginalName();
+        $this->path = $user_id.'_'.$this->getFile()->getClientOriginalName();
 
     // clean up the file property as you won't need it anymore
         $this->file = null;

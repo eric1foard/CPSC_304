@@ -56,22 +56,48 @@ class PhotoController extends Controller
 
         if ($form->isValid()) {
 
-            $entity->setUser($this->get('security.token_storage')->getToken()->getUser());
-            $entity->upload();
-            $entity->setUploadDate(date('Y-m-d'));
+            $entity->upload($this->getLoggedInUser());
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+            $sql = 'INSERT INTO scrawl_photos value(:id, :user_id, :path, :uploadDate, :latitude, :longitude)';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            $stmt->bindValue('id', 125);
+            $stmt->bindValue('user_id', $this->getLoggedInUser());
+            //set path of photo to be username_somephoto
+            $stmt->bindValue('path', $entity->getPath());
+            $stmt->bindValue('uploadDate', date('Y-m-d'));
+            $stmt->bindValue('latitude', $form["latitude"]->getData());
+            $stmt->bindValue('longitude', $form["longitude"]->getData());
+
+            //execute query
+            $stmt->execute();
 
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('photo_show', array('id' => 125)));
         }
 
         $this->get('session')->getFlashBag()
         ->add('error','oops! something went wrong. Try again!');
+
+        return $this->redirectToRoute('homepage');
+    }
+
+
+    public function testAction()
+    {
+        $sql = 'INSERT INTO scrawl_photos value(100, 1, "testing", "10 10 10", "50", "50")';
+
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        $stmt->execute();
+
+        $this->get('session')->getFlashBag()
+        ->add('notice','from test action!');
 
         return $this->redirectToRoute('homepage');
     }
@@ -304,4 +330,10 @@ class PhotoController extends Controller
 
         return new JsonResponse($photoInfo);
     }
+
+    public function getLoggedInUser()
+    {
+        return $this->get('security.token_storage')->getToken()->getUser()->getId();
+    }
+
 }
