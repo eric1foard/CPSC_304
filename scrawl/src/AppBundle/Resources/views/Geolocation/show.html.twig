@@ -6,10 +6,6 @@
     <table class="record_properties">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
                 <th>Postalcode</th>
                 <td>{{ entity.postalCode }}</td>
             </tr>
@@ -47,7 +43,7 @@
         </a>
     </li>
     <li>
-        <a href="{{ path('geolocation_edit', { 'id': entity.id }) }}">
+        <a href="{{ path('geolocation_edit', { 'postalCode': entity.postalCode }) }}">
             Edit
         </a>
     </li>

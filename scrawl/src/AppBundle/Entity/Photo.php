@@ -59,7 +59,7 @@ class Photo
     /** @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="photos")
     *   @ORM\JoinTable(name="has_tag")
     */
-    private $tags;
+    public $tags;
 
 
 

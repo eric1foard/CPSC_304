@@ -21,9 +21,16 @@ class GeolocationController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_geolocation';
 
-        $entities = $em->getRepository('AppBundle:Geolocation')->findAll();
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //execute query
+        $stmt->execute();
+
+        //get all rows of results 
+        $entities = $stmt->fetchAll();
 
         return $this->render('AppBundle:Geolocation:index.html.twig', array(
             'entities' => $entities,
@@ -40,11 +47,27 @@ class GeolocationController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+            $sql = 'INSERT INTO scrawl_geolocation 
+                    value(:postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
 
-            return $this->redirect($this->generateUrl('geolocation_show', array('id' => $entity->getId())));
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            $stmt->bindValue('postalCode', $form["postalCode"]->getData());
+            $stmt->bindValue('country', $form["country"]->getData());
+            $stmt->bindValue('region', $form["region"]->getData());
+            $stmt->bindValue('region', $form["city"]->getData());
+            $stmt->bindValue('latitude', $form["latitude"]->getData());
+            $stmt->bindValue('longitude', $form["longitude"]->getData());
+            $stmt->bindValue('region', $form["streetAddress"]->getData());
+
+            //execute query
+            $stmt->execute();
+
+            $this->get('session')->getFlashBag()
+            ->add('notice','photo location successfully saved!');
+
+            return $this->redirect($this->generateUrl('geolocation_show', array('postalCode' => 'v5c 1f5')));
         }
 
         return $this->render('AppBundle:Geolocation:new.html.twig', array(
@@ -91,17 +114,26 @@ class GeolocationController extends Controller
      * Finds and displays a Geolocation entity.
      *
      */
-    public function showAction($id)
+    public function showAction($postalCode)
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_geolocation g WHERE g.postalCode=?';
 
-        $entity = $em->getRepository('AppBundle:Geolocation')->find($id);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //replace ? in query with $postalCode
+        $stmt->bindValue(1, $postalCode);
+
+        $stmt->execute();
+
+        //get only row of result
+        $entity = $stmt->fetch();
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Geolocation entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
+        $deleteForm = $this->createDeleteForm($postalCode);
 
         return $this->render('AppBundle:Geolocation:show.html.twig', array(
             'entity'      => $entity,
@@ -113,18 +145,18 @@ class GeolocationController extends Controller
      * Displays a form to edit an existing Geolocation entity.
      *
      */
-    public function editAction($id)
+    public function editAction($postalCode)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('AppBundle:Geolocation')->find($id);
+        $entity = $em->getRepository('AppBundle:Geolocation')->find($postalCode);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Geolocation entity.');
         }
 
         $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $deleteForm = $this->createDeleteForm($postalCode);
 
         return $this->render('AppBundle:Geolocation:edit.html.twig', array(
             'entity'      => $entity,
@@ -143,7 +175,7 @@ class GeolocationController extends Controller
     private function createEditForm(Geolocation $entity)
     {
         $form = $this->createForm(new GeolocationType(), $entity, array(
-            'action' => $this->generateUrl('geolocation_update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('geolocation_update', array('postalCode' => $entity->getPostalCode())),
             'method' => 'PUT',
         ));
 
@@ -155,24 +187,24 @@ class GeolocationController extends Controller
      * Edits an existing Geolocation entity.
      *
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, $postalCode)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('AppBundle:Geolocation')->find($id);
+        $entity = $em->getRepository('AppBundle:Geolocation')->find($postalCode);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Geolocation entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
+        $deleteForm = $this->createDeleteForm($postalCode);
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('geolocation_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('geolocation_edit', array('postalCode' => $postalCode)));
         }
 
         return $this->render('AppBundle:Geolocation:edit.html.twig', array(
@@ -185,14 +217,14 @@ class GeolocationController extends Controller
      * Deletes a Geolocation entity.
      *
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request, $postalCode)
     {
-        $form = $this->createDeleteForm($id);
+        $form = $this->createDeleteForm($postalCode);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('AppBundle:Geolocation')->find($id);
+            $entity = $em->getRepository('AppBundle:Geolocation')->find($postalCode);
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Geolocation entity.');
@@ -206,16 +238,16 @@ class GeolocationController extends Controller
     }
 
     /**
-     * Creates a form to delete a Geolocation entity by id.
+     * Creates a form to delete a Geolocation entity by postalCode.
      *
-     * @param mixed $id The entity id
+     * @param mixed $postalCode The entity postalCode
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm($id)
+    private function createDeleteForm($postalCode)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('geolocation_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('geolocation_delete', array('postalCode' => $postalCode)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()

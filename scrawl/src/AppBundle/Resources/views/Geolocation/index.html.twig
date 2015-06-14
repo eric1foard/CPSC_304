@@ -6,7 +6,6 @@
     <table class="records_list">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Postalcode</th>
                 <th>Country</th>
                 <th>Region</th>
@@ -20,7 +19,7 @@
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td><a href="{{ path('geolocation_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td><a href="{{ path('geolocation_show', { 'id': entity.postalCode }) }}">{{ entity.postalCode}}</a></td>
                 <td>{{ entity.postalCode }}</td>
                 <td>{{ entity.country }}</td>
                 <td>{{ entity.region }}</td>
@@ -31,10 +30,10 @@
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('geolocation_show', { 'id': entity.id }) }}">show</a>
+                        <a href="{{ path('geolocation_show', { 'id': entity.postalCode }) }}">show</a>
                     </li>
                     <li>
-                        <a href="{{ path('geolocation_edit', { 'id': entity.id }) }}">edit</a>
+                        <a href="{{ path('geolocation_edit', { 'id': entity.postalCode }) }}">edit</a>
                     </li>
                 </ul>
                 </td>
