@@ -72,6 +72,9 @@ class UserController extends Controller
             $em->persist($user);
             $em->flush();
 
+            //save users's location in appropriate table
+            $this->persistGeolocationForUser($user);
+
             return $this->redirect($this->generateUrl('user_show', array('id' => $user->getId())));
         }
 
@@ -79,6 +82,60 @@ class UserController extends Controller
             'entity' => $user,
             'form'   => $form->createView(),
             ));
+    }
+
+        /**
+    * Helper to save geolocation based on lat/long entry in User form
+    **/
+    private function persistGeolocationForUser($entity)
+    {
+        $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
+
+        try{
+            $sql = 'INSERT INTO scrawl_geolocation 
+                    value(:postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
+        
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            $stmt->bindValue('postalCode', $location['postalCode']);
+            $stmt->bindValue('country', $location['country']);
+            $stmt->bindValue('region', $location["region"]);
+            $stmt->bindValue('city', $location["city"]);
+            $stmt->bindValue('latitude', $entity->getLatitude());
+            $stmt->bindValue('longitude', $entity->getLongitude());
+            $stmt->bindValue('streetAddress', $location["streetAddress"]);
+
+            //execute query
+            $stmt->execute();
+        }
+        catch (\Doctrine\DBAL\DBALException $e) { // Should check for more specific exception
+            // duplicate entry. Entry we want already in the table. Everything is good.
+        }
+
+        $this->get('session')->getFlashBag()
+        ->add('notice','user location successfully saved!');
+    }
+
+    private function reverseGeocode($lat, $lon){
+        $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" . $lat . "," . $lon;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $json = json_decode(curl_exec($ch), true);
+
+        $addressComponents = $json['results'][0]['address_components'];
+
+        $location = array (
+            'postalCode' => $addressComponents[5]['long_name'],
+            'streetAddress' => $addressComponents[0]['long_name'] . " " .$addressComponents[1]['long_name'],
+            'city' => $addressComponents[2]['long_name'],
+            'region' => $addressComponents[3]['short_name'],
+            'country' => $addressComponents[4]['long_name']
+        );
+
+        return $location;
     }
 
     /**

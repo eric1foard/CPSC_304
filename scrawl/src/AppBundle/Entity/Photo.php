@@ -16,15 +16,9 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Photo
 {
-	 /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-	 private $id;
-
     /**
-     * @ORM\Column(type="string", length=80, nullable=true)
+     * @ORM\Id
+     * @ORM\Column(name="id", type="string", length=80, nullable=true)
      */
     private $path;
 
@@ -66,11 +60,11 @@ class Photo
     /**
      * Get id
      *
-     * @return integer 
+     * @return string $path 
      */
     public function getId()
     {
-        return $this->id;
+        return $this->path;
     }
 
     /**
