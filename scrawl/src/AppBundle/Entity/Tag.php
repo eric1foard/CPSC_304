@@ -12,26 +12,18 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Tag
 {
-	 /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-	 private $id;
 
 	 /**
-     * @ORM\Column(type="string", length=60, unique=true)
+     * @ORM\Id
+     * @ORM\Column(name="id", type="string", length=60, unique=true)
      */
 	 private $tagName;
 
      /**
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", mappedBy="tags")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Photo", mappedBy="tags")
      */
      private $photos;
      
-
-
-
 
     /**
      * Get id
@@ -40,7 +32,7 @@ class Tag
      */
     public function getId()
     {
-        return $this->id;
+        return $this->tagName;
     }
 
     /**

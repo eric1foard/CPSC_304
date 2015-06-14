@@ -18,7 +18,7 @@ class Photo
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="string", length=80, nullable=true)
+     * @ORM\Column(name="id", type="string", length=80, nullable=true)
      */
     private $path;
 
@@ -51,11 +51,11 @@ class Photo
     private $longitude;
 
     /** @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="photos")
-    *   @ORM\JoinTable(name="has_tag", 
-    *       joinColumns={@ORM\JoinColumn(name="tag_name", referencedColumnName="tagName")},
-    *       inverseJoinColumns={@ORM\JoinColumn(name="photo_path", referencedColumnName="path")})
+    *   @ORM\JoinTable(name="has_tag")
     */
     public $tags;
+
+
 
     /**
      * Get id
