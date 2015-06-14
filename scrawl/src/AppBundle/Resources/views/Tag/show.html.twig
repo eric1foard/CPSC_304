@@ -1,22 +1,20 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Tag</h1>
+<h1>Tag</h1>
 
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Tagname</th>
-                <td>{{ entity.tagName }}</td>
-            </tr>
-        </tbody>
-    </table>
+<table class="record_properties">
+    <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ entity.id }}</td>
+        </tr>
+        <tr>
+        </tr>
+    </tbody>
+</table>
 
-        <ul class="record_actions">
+<ul class="record_actions">
     <li>
         <a href="{{ path('tag') }}">
             Back to the list
@@ -26,7 +24,10 @@
         <a href="{{ path('tag_edit', { 'id': entity.id }) }}">
             Edit
         </a>
+
+        <a href="{{ path('tag_delete', { 'id': entity.id }) }}">
+            Delete
+        </a>
     </li>
-    <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

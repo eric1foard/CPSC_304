@@ -6,7 +6,6 @@
     <table class="records_list">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Tagname</th>
                 <th>Actions</th>
             </tr>
@@ -14,8 +13,7 @@
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td><a href="{{ path('tag_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.tagName }}</td>
+                <td>{{ entity.id }}</td>
                 <td>
                 <ul>
                     <li>
