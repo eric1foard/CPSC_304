@@ -9,7 +9,8 @@
                 <th>Id</th>
                 <th>Username</th>
                 <th>Email</th>
-                <th>City</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
                 <th>Selfsummary</th>
                 <th>Actions</th>
             </tr>
@@ -20,7 +21,8 @@
                 <td><a href="{{ path('user_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
                 <td>{{ entity.username }}</td>
                 <td>{{ entity.email }}</td>
-                <td>{{ entity.city }}</td>
+                <td>{{ entity.latitude }}</td>
+                <td>{{ entity.longitude }}</td>
                 <td>{{ entity.selfSummary }}</td>
                 <td>
                 <ul>

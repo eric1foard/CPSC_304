@@ -57,9 +57,14 @@ class User implements UserInterface, \Serializable
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=60, unique=false)
+     * @ORM\Column(type="float", nullable=false)
      */
-    private $city;
+    private $latitude;
+
+    /**
+     * @ORM\Column(type="float", nullable=false)
+     */
+    private $longitude;
 
     /**
      * @ORM\Column(type="string", length=256, unique=false)
@@ -190,26 +195,49 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * Set city
+     * Set latitude
      *
-     * @param string $city
-     * @return User
+     * @param float $latitude
+     * @return Geolocation
      */
-    public function setCity($city)
+    public function setLatitude($latitude)
     {
-        $this->city = $city;
+        $this->latitude = $latitude;
 
         return $this;
     }
 
     /**
-     * Get city
+     * Get latitude
      *
-     * @return string 
+     * @return float 
      */
-    public function getCity()
+    public function getLatitude()
     {
-        return $this->city;
+        return $this->latitude;
+    }
+
+        /**
+     * Set longitude
+     *
+     * @param float $longitude
+     * @return Geolocation
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * Get longitude
+     *
+     * @return float 
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
     }
 
     /**

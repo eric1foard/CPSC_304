@@ -23,7 +23,8 @@ class UserType extends AbstractType
                 'required' => true,
                 'first_options'  => array('label' => 'Create a password', 'error_bubbling' => true),
                 'second_options' => array('label' => 'Confirm your password')))
-            ->add('city')
+            ->add('latitude')
+            ->add('longitude')
             ->add('selfSummary')
         ;
     }
