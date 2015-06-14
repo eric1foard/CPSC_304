@@ -61,15 +61,14 @@ class PhotoController extends Controller
 
             $entity->upload($this->getLoggedInUser());
 
-            $sql = 'INSERT INTO scrawl_photos value(:id, :user_id, :path, :uploadDate, :latitude, :longitude)';
+            $sql = 'INSERT INTO scrawl_photos value(:path, :user_id, :uploadDate, :latitude, :longitude)';
 
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('id', 157);
-            $stmt->bindValue('user_id', $this->getLoggedInUser());
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
+            $stmt->bindValue('user_id', $this->getLoggedInUser());
             $stmt->bindValue('uploadDate', date('Y-m-d'));
             $stmt->bindValue('latitude', $form["latitude"]->getData());
             $stmt->bindValue('longitude', $form["longitude"]->getData());
@@ -80,7 +79,7 @@ class PhotoController extends Controller
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => 157)));
+            return $this->redirect($this->generateUrl('photo_show', array('id' => $entity->getPath())));
         }
 
         $this->get('session')->getFlashBag()
@@ -199,7 +198,7 @@ class PhotoController extends Controller
     public function showAction($id)
     {
 
-        $sql = 'SELECT * FROM scrawl_photos s WHERE s.id=?';
+        $sql = 'SELECT * FROM scrawl_photos WHERE path=?';
 
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
@@ -232,7 +231,7 @@ class PhotoController extends Controller
      */
     public function editAction($id)
     {
-        $sql = 'SELECT * FROM scrawl_photos s WHERE s.id=?';
+        $sql = 'SELECT * FROM scrawl_photos WHERE path=?';
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
         //replace ? in query with $id
@@ -292,13 +291,13 @@ class PhotoController extends Controller
             $lat = $postParamsHash['latitude'];
             $lng = $postParamsHash['longitude'];
 
-            $sql = 'UPDATE scrawl_photos SET latitude=:lat, longitude=:lng WHERE id=:id';
+            $sql = 'UPDATE scrawl_photos SET latitude=:lat, longitude=:lng WHERE path=:path';
 
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
      //bind variables
-            $stmt->bindValue('id', $id);
+            $stmt->bindValue('path', $id);
             $stmt->bindValue('lat', $lat);
             $stmt->bindValue('lng', $lng);
 
@@ -324,7 +323,7 @@ class PhotoController extends Controller
      */
     public function deleteAction($id)
     {
-        $sql = 'DELETE FROM scrawl_photos WHERE id=?';
+        $sql = 'DELETE FROM scrawl_photos WHERE path=?';
 
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);

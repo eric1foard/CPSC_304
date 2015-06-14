@@ -16,14 +16,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  */
 class Photo
 {
-	 /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-	 private $id;
-
     /**
+     * @ORM\Id
      * @ORM\Column(type="string", length=80, nullable=true)
      */
     private $path;
@@ -57,20 +51,20 @@ class Photo
     private $longitude;
 
     /** @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="photos")
-    *   @ORM\JoinTable(name="has_tag")
+    *   @ORM\JoinTable(name="has_tag", 
+    *       joinColumns={@ORM\JoinColumn(name="tag_name", referencedColumnName="tagName")},
+    *       inverseJoinColumns={@ORM\JoinColumn(name="photo_path", referencedColumnName="path")})
     */
     public $tags;
-
-
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return string $path 
      */
     public function getId()
     {
-        return $this->id;
+        return $this->path;
     }
 
     /**
