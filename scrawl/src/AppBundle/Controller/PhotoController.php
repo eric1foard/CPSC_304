@@ -66,7 +66,7 @@ class PhotoController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('id', 156);
+            $stmt->bindValue('id', 157);
             $stmt->bindValue('user_id', $this->getLoggedInUser());
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
@@ -80,7 +80,7 @@ class PhotoController extends Controller
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => 148)));
+            return $this->redirect($this->generateUrl('photo_show', array('id' => 157)));
         }
 
         $this->get('session')->getFlashBag()
@@ -98,8 +98,8 @@ class PhotoController extends Controller
 
         try{
             $sql = 'INSERT INTO scrawl_geolocation 
-                    value(:postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
-        
+            value(:postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
+
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
@@ -138,7 +138,7 @@ class PhotoController extends Controller
             'city' => $addressComponents[2]['long_name'],
             'region' => $addressComponents[3]['short_name'],
             'country' => $addressComponents[4]['long_name']
-        );
+            );
 
         return $location;
     }
@@ -276,20 +276,47 @@ class PhotoController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing Photo entity.
      *
      */
     public function updateAction(Request $request, $id)
     {
-        var_dump($request->get('latitude'));die;
+     //retrieve the hash of form variables passed to the http request
+     //return error message if parameters do not exist
+        try
+        {
+            $postParamsHash = $request->request->get('appbundle_photo', 'does not exist!');
 
-        
+            $lat = $postParamsHash['latitude'];
+            $lng = $postParamsHash['longitude'];
 
-        return $this->render('AppBundle:Photo:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            ));
+            $sql = 'UPDATE scrawl_photos SET latitude=:lat, longitude=:lng WHERE id=:id';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+     //bind variables
+            $stmt->bindValue('id', $id);
+            $stmt->bindValue('lat', $lat);
+            $stmt->bindValue('lng', $lng);
+
+     //execute query
+            $stmt->execute();
+        }
+        catch (\Doctrine\DBAL\DBALException $e) {
+
+            $this->get('session')->getFlashBag()
+            ->add('error','there was a problem updating the photo! Please try again.');
+
+            return $this->redirect($this->generateUrl('homepage'));
+        }
+
+        $this->get('session')->getFlashBag()
+        ->add('notice','photo successfully uploaded!');
+
+        return $this->redirect($this->generateUrl('photo_show', array('id' => $id)));
     }
     /**
      * Deletes a Photo entity.
