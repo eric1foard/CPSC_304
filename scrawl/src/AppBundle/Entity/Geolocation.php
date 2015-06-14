@@ -21,22 +21,22 @@ class Geolocation
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=10, unique=true, nullable=true)
+     * @ORM\Column(type="string", length=10, unique=false, nullable=false)
      */
     private $postalCode;
 
     /**
-     * @ORM\Column(type="string", length=20, unique=false, nullable=true)
+     * @ORM\Column(type="string", length=20, unique=false, nullable=false)
      */
     private $country;
 
     /**
-     * @ORM\Column(type="string", length=20, unique=false, nullable=true)
+     * @ORM\Column(type="string", length=20, unique=false, nullable=false)
      */
     private $region;
 
     /**
-     * @ORM\Column(type="string", length=20, unique=false, nullable=true)
+     * @ORM\Column(type="string", length=20, unique=false, nullable=false)
      */
     private $city;
 
@@ -51,7 +51,7 @@ class Geolocation
     private $longitude;
 
     /**
-     * @ORM\Column(type="string", length=30, unique=false, nullable=true)
+     * @ORM\Column(type="string", length=30, unique=false, nullable=false)
      */
     private $streetAddress;
 

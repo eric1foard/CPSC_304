@@ -53,7 +53,7 @@ class GeolocationController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('id', 129);
+            $stmt->bindValue('id', 310);
             $stmt->bindValue('postalCode', $form["postalCode"]->getData());
             $stmt->bindValue('country', $form["country"]->getData());
             $stmt->bindValue('region', $form["region"]->getData());
@@ -68,7 +68,7 @@ class GeolocationController extends Controller
             $this->get('session')->getFlashBag()
             ->add('notice','photo location successfully saved!');
 
-            return $this->redirect($this->generateUrl('geolocation_show', array('id' => 129)));
+            return $this->redirect($this->generateUrl('geolocation_show', array('id' => 310)));
         }
 
         return $this->render('AppBundle:Geolocation:new.html.twig', array(

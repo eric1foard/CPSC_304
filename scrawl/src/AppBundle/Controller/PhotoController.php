@@ -66,7 +66,7 @@ class PhotoController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('id', 128);
+            $stmt->bindValue('id', 147);
             $stmt->bindValue('user_id', $this->getLoggedInUser());
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
@@ -80,7 +80,7 @@ class PhotoController extends Controller
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => 128)));
+            return $this->redirect($this->generateUrl('photo_show', array('id' => 147)));
         }
 
         $this->get('session')->getFlashBag()
@@ -95,9 +95,12 @@ class PhotoController extends Controller
     private function persistGeolocationForPhoto($entity)
     {
         // make call to Google API to populate other geolocation fields given lat, long
-        // $curl = new \Ivory\HttpAdapter\CurlHttpAdapter();
-        // $geocoder = new \Geocoder\Provider\GoogleMaps($curl);
-        // $geocoder->reverse($entity->getLatitude(), $entity->getLongitude());
+         //$curl = new \Ivory\HttpAdapter\CurlHttpAdapter();
+         //$geocoder = new \Geocoder\Provider\GoogleMaps($curl);
+         //$response = json_decode($geocoder->reverse($entity->getLatitude(), $entity->getLongitude()));
+
+        $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
+        var_dump($location);
         //TODO create the rest of the geocoder entity
 
         $sql = 'INSERT INTO scrawl_geolocation 
@@ -106,14 +109,14 @@ class PhotoController extends Controller
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
 
-        $stmt->bindValue('id', 200);
-        $stmt->bindValue('postalCode', 'null');
-        $stmt->bindValue('country', 'null');
-        $stmt->bindValue('region', 'null');
-        $stmt->bindValue('city', 'null');
+        $stmt->bindValue('id', 312);
+        $stmt->bindValue('postalCode', $location['postalCode']);
+        $stmt->bindValue('country', $location['country']);
+        $stmt->bindValue('region', $location["region"]);
+        $stmt->bindValue('city', $location["city"]);
         $stmt->bindValue('latitude', $entity->getLatitude());
         $stmt->bindValue('longitude', $entity->getLongitude());
-        $stmt->bindValue('streetAddress', 'null');
+        $stmt->bindValue('streetAddress', $location["streetAddress"]);
 
         //execute query
         $stmt->execute();
@@ -122,6 +125,26 @@ class PhotoController extends Controller
         ->add('notice','photo location successfully saved!');
     }
 
+    private function reverseGeocode($lat, $lon){
+        $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" . $lat . "," . $lon;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $json = json_decode(curl_exec($ch), true);
+
+        $addressComponents = $json['results'][0]['address_components'];
+
+        $location = array (
+            'postalCode' => $addressComponents[5]['long_name'],
+            'streetAddress' => $addressComponents[0]['long_name'] . " " .$addressComponents[1]['long_name'],
+            'city' => $addressComponents[2]['long_name'],
+            'region' => $addressComponents[3]['short_name'],
+            'country' => $addressComponents[4]['long_name']
+        );
+
+        return $location;
+    }
 
     public function testAction()
     {
