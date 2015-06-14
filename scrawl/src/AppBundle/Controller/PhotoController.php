@@ -66,7 +66,7 @@ class PhotoController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('id', 147);
+            $stmt->bindValue('id', 156);
             $stmt->bindValue('user_id', $this->getLoggedInUser());
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
@@ -80,7 +80,7 @@ class PhotoController extends Controller
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => 147)));
+            return $this->redirect($this->generateUrl('photo_show', array('id' => 148)));
         }
 
         $this->get('session')->getFlashBag()
@@ -94,32 +94,29 @@ class PhotoController extends Controller
     **/
     private function persistGeolocationForPhoto($entity)
     {
-        // make call to Google API to populate other geolocation fields given lat, long
-         //$curl = new \Ivory\HttpAdapter\CurlHttpAdapter();
-         //$geocoder = new \Geocoder\Provider\GoogleMaps($curl);
-         //$response = json_decode($geocoder->reverse($entity->getLatitude(), $entity->getLongitude()));
-
         $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
-        var_dump($location);
-        //TODO create the rest of the geocoder entity
 
-        $sql = 'INSERT INTO scrawl_geolocation 
-                value(:id, :postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
+        try{
+            $sql = 'INSERT INTO scrawl_geolocation 
+                    value(:postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
         
-        $stmt = $this->getDoctrine()->getManager()
-        ->getConnection()->prepare($sql);
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
 
-        $stmt->bindValue('id', 312);
-        $stmt->bindValue('postalCode', $location['postalCode']);
-        $stmt->bindValue('country', $location['country']);
-        $stmt->bindValue('region', $location["region"]);
-        $stmt->bindValue('city', $location["city"]);
-        $stmt->bindValue('latitude', $entity->getLatitude());
-        $stmt->bindValue('longitude', $entity->getLongitude());
-        $stmt->bindValue('streetAddress', $location["streetAddress"]);
+            $stmt->bindValue('postalCode', $location['postalCode']);
+            $stmt->bindValue('country', $location['country']);
+            $stmt->bindValue('region', $location["region"]);
+            $stmt->bindValue('city', $location["city"]);
+            $stmt->bindValue('latitude', $entity->getLatitude());
+            $stmt->bindValue('longitude', $entity->getLongitude());
+            $stmt->bindValue('streetAddress', $location["streetAddress"]);
 
-        //execute query
-        $stmt->execute();
+            //execute query
+            $stmt->execute();
+        }
+        catch (\Doctrine\DBAL\DBALException $e) { // Should check for more specific exception
+            // duplicate entry. Entry we want already in the table. Everything is good.
+        }
 
         $this->get('session')->getFlashBag()
         ->add('notice','photo location successfully saved!');

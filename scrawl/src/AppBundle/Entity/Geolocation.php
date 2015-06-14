@@ -14,14 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Geolocation
 {
     /**
-     * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=10, unique=false, nullable=false)
+     * @ORM\Column(type="string", length=10, unique=true, nullable=false)
      */
     private $postalCode;
 
@@ -55,16 +49,6 @@ class Geolocation
      */
     private $streetAddress;
 
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set postalCode
