@@ -9,6 +9,8 @@ use AppBundle\Entity\Photo;
 use AppBundle\Form\PhotoType;
 use AppBundle\Entity\Geolocation;
 
+use Symfony\Component\Config\Definition\Exception\Exception;
+
 /**
  * Photo controller.
  *
@@ -93,7 +95,13 @@ class PhotoController extends Controller
     **/
     private function persistGeolocationForPhoto($entity)
     {
-        $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
+        try{
+            $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
+   
+        }
+        catch(\Exception $e){
+            return;
+        }
 
         try{
             $sql = 'INSERT INTO scrawl_geolocation 
@@ -129,11 +137,15 @@ class PhotoController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $json = json_decode(curl_exec($ch), true);
 
+        if ($json['status'] == 'ZERO_RESULTS'){
+            throw new Exception("Issues decoding specified photo location", 1);
+        }
+
         $addressComponents = $json['results'][0]['address_components'];
 
         $location = array (
             'postalCode' => $addressComponents[5]['long_name'],
-            'streetAddress' => $addressComponents[0]['long_name'] . " " .$addressComponents[1]['long_name'],
+            'streetAddress' => $addressComponents[0]['long_name'] . " " . $addressComponents[1]['long_name'],
             'city' => $addressComponents[2]['long_name'],
             'region' => $addressComponents[3]['short_name'],
             'country' => $addressComponents[4]['long_name']

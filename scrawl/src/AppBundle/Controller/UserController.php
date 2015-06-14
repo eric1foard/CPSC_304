@@ -8,6 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
 
+use Symfony\Component\Config\Definition\Exception\Exception;
+
 /**
  * User controller.
  *
@@ -89,7 +91,12 @@ class UserController extends Controller
     **/
     private function persistGeolocationForUser($entity)
     {
-        $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
+        try{
+            $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
+        }
+        catch(\Exception $e){
+            return;
+        }
 
         try{
             $sql = 'INSERT INTO scrawl_geolocation 
@@ -123,13 +130,18 @@ class UserController extends Controller
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        
         $json = json_decode(curl_exec($ch), true);
+
+        if ($json['status'] == 'ZERO_RESULTS'){
+            throw new Exception("Issues decoding specified user location", 1);
+        }
 
         $addressComponents = $json['results'][0]['address_components'];
 
         $location = array (
             'postalCode' => $addressComponents[5]['long_name'],
-            'streetAddress' => $addressComponents[0]['long_name'] . " " .$addressComponents[1]['long_name'],
+            'streetAddress' => $addressComponents[0]['long_name'] . " " . $addressComponents[1]['long_name'],
             'city' => $addressComponents[2]['long_name'],
             'region' => $addressComponents[3]['short_name'],
             'country' => $addressComponents[4]['long_name']
