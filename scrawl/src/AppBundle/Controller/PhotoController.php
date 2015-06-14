@@ -200,19 +200,29 @@ class PhotoController extends Controller
      */
     public function editAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_photos s WHERE s.id=?';
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
+        //execute query
+        $stmt->execute();
+        //get only row of result
+        $result = $stmt->fetch();
 
-        $entity = $em->getRepository('AppBundle:Photo')->find($id);
+        //render edit form
+        $entity = new Photo();
+        $editForm = $this->createEditForm($entity, $id);
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Photo entity.');
-        }
+        //set edit form fields to data from query
+        $editForm->get('latitude')->setData($result['latitude']);
+        $editForm->get('longitude')->setData($result['longitude']);
 
-        $editForm = $this->createEditForm($entity);
 
         return $this->render('AppBundle:Photo:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity'    => $entity,
+            'id'        => $id,
+            'edit_form' => $editForm->createView()
             ));
     }
 
@@ -223,10 +233,10 @@ class PhotoController extends Controller
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Photo $entity)
+    private function createEditForm(Photo $entity, $id)
     {
         $form = $this->createForm(new PhotoType(), $entity, array(
-            'action' => $this->generateUrl('photo_update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('photo_update', array('id' => $id)),
             'method' => 'PUT',
             ));
 
@@ -240,22 +250,9 @@ class PhotoController extends Controller
      */
     public function updateAction(Request $request, $id)
     {
-        $em = $this->getDoctrine()->getManager();
+        var_dump($request->get('latitude'));die;
 
-        $entity = $em->getRepository('AppBundle:Photo')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Photo entity.');
-        }
-
-        $editForm = $this->createEditForm($entity);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isValid()) {
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('photo_edit', array('id' => $id)));
-        }
+        
 
         return $this->render('AppBundle:Photo:edit.html.twig', array(
             'entity'      => $entity,
