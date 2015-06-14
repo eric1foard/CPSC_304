@@ -7,9 +7,15 @@
 
         <ul class="record_actions">
     <li>
+    	{% if is_granted('ROLE_ADMIN') %}
         <a href="{{ path('user') }}">
             Back to the list
         </a>
+        {% else %}
+        <a href="{{ path('homepage') }}">
+            Homepage
+        </a>
+        {% endif %}
     </li>
     <li>{{ form(delete_form) }}</li>
 </ul>
