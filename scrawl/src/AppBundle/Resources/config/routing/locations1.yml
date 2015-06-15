@@ -1,0 +1,30 @@
+locations1:
+    path:     /
+    defaults: { _controller: "AppBundle:Locations1:index" }
+
+locations1_show:
+    path:     /{id}/show
+    defaults: { _controller: "AppBundle:Locations1:show" }
+
+locations1_new:
+    path:     /new
+    defaults: { _controller: "AppBundle:Locations1:new" }
+
+locations1_create:
+    path:     /create
+    defaults: { _controller: "AppBundle:Locations1:create" }
+    methods:  POST
+
+locations1_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "AppBundle:Locations1:edit" }
+
+locations1_update:
+    path:     /{id}/update
+    defaults: { _controller: "AppBundle:Locations1:update" }
+    methods:  [POST, PUT]
+
+locations1_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "AppBundle:Locations1:delete" }
+    methods:  [POST, DELETE]

@@ -128,24 +128,37 @@ class UserController extends Controller
                 return $this->redirect($this->generateUrl('homepage'));
             }
 
-            try{
-                $sql = 'INSERT INTO scrawl_geolocation 
-                value(:postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
+        try{
+            // Insert into Locations1 table
+            $sql = 'INSERT INTO scrawl_locations1
+                    value(:postalCode, :country, :region, :city)';
+        
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
 
-                $stmt = $this->getDoctrine()->getManager()
-                ->getConnection()->prepare($sql);
-
-                $stmt->bindValue('postalCode', $location['postalCode']);
-                $stmt->bindValue('country', $location['country']);
-                $stmt->bindValue('region', $location["region"]);
-                $stmt->bindValue('city', $location["city"]);
-                $stmt->bindValue('latitude', $entity->getLatitude());
-                $stmt->bindValue('longitude', $entity->getLongitude());
-                $stmt->bindValue('streetAddress', $location["streetAddress"]);
+            $stmt->bindValue('postalCode', $location['postalCode']);
+            $stmt->bindValue('country', $location['country']);
+            $stmt->bindValue('region', $location["region"]);
+            $stmt->bindValue('city', $location["city"]);
 
             //execute query
-                $stmt->execute();
-            }
+            $stmt->execute();
+
+            // Insert into Locations2 tables
+            $sql2 = 'INSERT INTO scrawl_locations2
+                    value(:latitude, :longitude, :postalCode, :streetAddress)';
+        
+            $stmt2 = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql2);
+
+            $stmt2->bindValue('latitude', $entity->getLatitude());
+            $stmt2->bindValue('longitude', $entity->getLongitude());
+            $stmt2->bindValue('postalCode', $location['postalCode']);
+            $stmt2->bindValue('streetAddress', $location["streetAddress"]);
+
+            //execute query
+            $stmt2->execute();
+        }
         catch (\Doctrine\DBAL\DBALException $e) { // Should check for more specific exception
             // duplicate entry. Entry we want already in the table. Everything is good.
         }
@@ -171,11 +184,11 @@ class UserController extends Controller
         $addressComponents = $json['results'][0]['address_components'];
 
         $location = array (
-            'postalCode' => geolocationJSONParser($addressComponents, 'postal_code')
-            'streetAddress' => geolocationJSONParser($addressComponents, 'street_number') . " " . geolocationJSONParser($addressComponents, 'street_name')
-            'city' => geolocationJSONParser($addressComponents, 'locality')
-            'region' => geolocationJSONParser($addressComponents, 'administrative_area_level_1')
-            'country' => geolocationJSONParser($addressComponents, 'country')
+            'postalCode' => $this->geolocationJSONParser($addressComponents, 'postal_code'),
+            'streetAddress' => $this->geolocationJSONParser($addressComponents, 'street_number') . " " . $this->geolocationJSONParser($addressComponents, 'street_name'),
+            'city' => $this->geolocationJSONParser($addressComponents, 'locality'),
+            'region' => $this->geolocationJSONParser($addressComponents, 'administrative_area_level_1'),
+            'country' => $this->geolocationJSONParser($addressComponents, 'country')
         );
 
         return $location;
