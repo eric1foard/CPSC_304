@@ -16,6 +16,8 @@ class Tag
 	 /**
      * @ORM\Id
      * @ORM\Column(name="id", type="string", length=60, unique=true)
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\User", inversedBy="username")
+     * @ORM\JoinTable(name="added_tag")
      */
 	 private $tagName;
 
