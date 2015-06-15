@@ -104,9 +104,10 @@ class PhotoController extends Controller
         }
 
         try{
-            $sql = 'INSERT INTO scrawl_geolocation 
-            value(:postalCode, :country, :region, :city, :latitude, :longitude, :streetAddress)';
-
+            // Insert into Locations1 table
+            $sql = 'INSERT INTO scrawl_locations1
+                    value(:postalCode, :country, :region, :city)';
+        
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
@@ -114,12 +115,24 @@ class PhotoController extends Controller
             $stmt->bindValue('country', $location['country']);
             $stmt->bindValue('region', $location["region"]);
             $stmt->bindValue('city', $location["city"]);
-            $stmt->bindValue('latitude', $entity->getLatitude());
-            $stmt->bindValue('longitude', $entity->getLongitude());
-            $stmt->bindValue('streetAddress', $location["streetAddress"]);
 
             //execute query
             $stmt->execute();
+
+            // Insert into Locations2 tables
+            $sql2 = 'INSERT INTO scrawl_locations2
+                    value(:latitude, :longitude, :postalCode, :streetAddress)';
+        
+            $stmt2 = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql2);
+
+            $stmt2->bindValue('latitude', $entity->getLatitude());
+            $stmt2->bindValue('longitude', $entity->getLongitude());
+            $stmt2->bindValue('postalCode', $location['postalCode']);
+            $stmt2->bindValue('streetAddress', $location["streetAddress"]);
+
+            //execute query
+            $stmt2->execute();
         }
         catch (\Doctrine\DBAL\DBALException $e) { // Should check for more specific exception
             // duplicate entry. Entry we want already in the table. Everything is good.
@@ -144,14 +157,27 @@ class PhotoController extends Controller
         $addressComponents = $json['results'][0]['address_components'];
 
         $location = array (
-            'postalCode' => $addressComponents[5]['long_name'],
-            'streetAddress' => $addressComponents[0]['long_name'] . " " . $addressComponents[1]['long_name'],
-            'city' => $addressComponents[2]['long_name'],
-            'region' => $addressComponents[3]['short_name'],
-            'country' => $addressComponents[4]['long_name']
-            );
+            'postalCode' => $this->geolocationJSONParser($addressComponents, 'postal_code'),
+            'streetAddress' => $this->geolocationJSONParser($addressComponents, 'street_number') . " " . $this->geolocationJSONParser($addressComponents, 'street_name'),
+            'city' => $this->geolocationJSONParser($addressComponents, 'locality'),
+            'region' => $this->geolocationJSONParser($addressComponents, 'administrative_area_level_1'),
+            'country' => $this->geolocationJSONParser($addressComponents, 'country')
+        );
 
         return $location;
+    }
+
+    // int would be the ith array it loops through
+    // type would be the keyword of the location that it looks through
+    private function geolocationJSONParser($sourcearray, $keyword)
+    {
+        $val = '';
+        for($i = 0; $i < count($sourcearray); $i++){
+            if(strpos($sourcearray[$i]['types'][0], $keyword)>0){
+                $val = $sourcearray[$i]['long_name'];
+            }
+        }
+        return $val;
     }
 
     public function testAction()

@@ -172,3 +172,67 @@ geolocation_delete:
 geolocation_show:
     path:   /geolocation/{id}
     defaults: {_controller: AppBundle:Geolocation:show }
+
+#################################
+##         Locations1          ##
+#################################
+
+locations1:
+    path:     /locations1
+    defaults: {_controller: AppBundle:Locations1:index }
+
+locations1_new:
+    path:   /locations1/new
+    defaults: { _controller: AppBundle:Locations1:new }
+
+locations1_create:
+    path:   /locations1/create
+    defaults: { _controller: AppBundle:Locations1:create }
+
+locations1_edit:
+    path:   /locations1/edit/{id}
+    defaults: {_controller: AppBundle:Locations1:edit }
+
+locations1_update:
+    path:   /locations1/update/{id}
+    defaults: {_controller: AppBundle:Locations1:update }
+
+locations1_delete:
+    path:   /locations1/delete/{id}
+    defaults: {_controller: AppBundle:Locations1:delete }
+
+locations1_show:
+    path:   /locations1/{id}
+    defaults: {_controller: AppBundle:Locations1:show }
+
+#################################
+##         Locations2          ##
+#################################
+
+locations2:
+    path:     /locations2
+    defaults: {_controller: AppBundle:Locations2:index }
+
+locations2_new:
+    path:   /locations2/new
+    defaults: { _controller: AppBundle:Locations2:new }
+
+locations2_create:
+    path:   /locations2/create
+    defaults: { _controller: AppBundle:Locations2:create }
+
+locations2_edit:
+    path:   /locations2/edit/{id}
+    defaults: {_controller: AppBundle:Locations2:edit }
+
+locations2_update:
+    path:   /locations2/update/{id}
+    defaults: {_controller: AppBundle:Locations2:update }
+
+locations2_delete:
+    path:   /locations2/delete/{id}
+    defaults: {_controller: AppBundle:Locations2:delete }
+
+locations2_show:
+    path:   /locations2/{id}
+    defaults: {_controller: AppBundle:Locations2:show }
