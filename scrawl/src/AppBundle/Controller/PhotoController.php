@@ -236,7 +236,7 @@ class PhotoController extends Controller
     public function showAction($id)
     {
 
-        $sql = 'SELECT * FROM scrawl_photos WHERE path=?';
+        $sql = 'SELECT * FROM scrawl_photos WHERE id=?';
 
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
@@ -251,7 +251,7 @@ class PhotoController extends Controller
         $entity = $stmt->fetch();
 
         //pass upload dir to view to use as img src
-        $uploadLocation = 'uploads/'.$entity['path'];
+        $uploadLocation = 'uploads/'.$entity['id'];
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Photo entity.');
