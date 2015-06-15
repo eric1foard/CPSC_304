@@ -135,7 +135,8 @@ class UserController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         
         $json = json_decode(curl_exec($ch), true);
-
+        
+        
         if ($json['status'] == 'ZERO_RESULTS'){
             throw new Exception("Issues decoding specified user location", 1);
         }
@@ -143,14 +144,27 @@ class UserController extends Controller
         $addressComponents = $json['results'][0]['address_components'];
 
         $location = array (
-            'postalCode' => $addressComponents[5]['long_name'],
-            'streetAddress' => $addressComponents[0]['long_name'] . " " . $addressComponents[1]['long_name'],
-            'city' => $addressComponents[2]['long_name'],
-            'region' => $addressComponents[3]['short_name'],
-            'country' => $addressComponents[4]['long_name']
+            'postalCode' => geolocationJSONParser($addressComponents, 'postal_code')
+            'streetAddress' => geolocationJSONParser($addressComponents, 'street_number') . " " . geolocationJSONParser($addressComponents, 'street_name')
+            'city' => geolocationJSONParser($addressComponents, 'locality')
+            'region' => geolocationJSONParser($addressComponents, 'administrative_area_level_1')
+            'country' => geolocationJSONParser($addressComponents, 'country')
         );
 
         return $location;
+    }
+
+    // int would be the ith array it loops through
+    // type would be the keyword of the location that it looks through
+    private function geolocationJSONParser($sourcearray, $keyword)
+    {
+        $val = '';
+        for($i = 0; $i < count($sourcearray); $i++){
+            if(strpos($sourcearray[$i]['types'][0], $keyword)>0){
+                $val = $sourcearray[$i]['long_name'];
+            }
+        }
+        return $val;
     }
 
     /**
