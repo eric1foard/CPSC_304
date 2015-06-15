@@ -19,6 +19,8 @@ class Photo
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="string", length=80, nullable=true)
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\User", inversedBy="username")
+     * @ORM\JoinTable(name="seen_in_person")
      */
     private $path;
 

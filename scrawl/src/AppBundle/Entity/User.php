@@ -23,6 +23,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=25, unique=true)
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Photo", mappedBy="path")
      */
     private $username;
 
