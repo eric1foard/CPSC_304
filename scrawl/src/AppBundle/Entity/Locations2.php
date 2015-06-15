@@ -20,7 +20,7 @@ class Locations2
     private $latitude;
 
     /**
-     * @ORM\Id
+     * 
      * @ORM\Column(type="float", nullable=false)
      */
     private $longitude;
