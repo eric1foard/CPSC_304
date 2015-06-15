@@ -15,14 +15,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, \Serializable
 {
     /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @ORM\Column(type="string", length=25, unique=true)
+     * @ORM\Id
      */
     private $username;
 
@@ -117,7 +111,6 @@ class User implements UserInterface, \Serializable
     public function serialize()
     {
         return serialize(array(
-            $this->id,
             $this->username,
             $this->password,
             $this->salt,
@@ -128,7 +121,6 @@ class User implements UserInterface, \Serializable
     public function unserialize($serialized)
     {
         list (
-            $this->id,
             $this->username,
             $this->password,
             $this->salt
@@ -142,7 +134,7 @@ class User implements UserInterface, \Serializable
      */
     public function getId()
     {
-        return $this->id;
+        return $this->username;
     }
 
     /**
