@@ -38,7 +38,7 @@ class TagController extends Controller
 
         return $this->render('AppBundle:Tag:index.html.twig', array(
             'entities' => $entities,
-        ));
+            ));
     }
     /**
      * Creates a new Tag entity.
@@ -53,10 +53,12 @@ class TagController extends Controller
         if ($form->isValid()) {
 
 
-            $sql = 'INSERT INTO scrawl_tags value(:tagName)';
+            $sql = 'INSERT INTO scrawl_tags value(:tagName, :user)';
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 
             $stmt->bindValue('tagName', $form['tagName']->getData());
+            $stmt->bindValue('user', $this->get('security.token_storage')->getToken()->getUser());
+
 
             $stmt->execute();            
 
@@ -68,7 +70,7 @@ class TagController extends Controller
         return $this->render('AppBundle:Tag:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
-        ));
+            ));
     }
 
     /**
@@ -83,7 +85,7 @@ class TagController extends Controller
         $form = $this->createForm(new TagType(), $entity, array(
             'action' => $this->generateUrl('tag_create'),
             'method' => 'POST',
-        ));
+            ));
 
         $form->add('submit', 'submit', array('label' => 'Create'));
 
@@ -102,7 +104,7 @@ class TagController extends Controller
         return $this->render('AppBundle:Tag:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
-        ));
+            ));
     }
 
     /**
@@ -127,7 +129,7 @@ class TagController extends Controller
 
         return $this->render('AppBundle:Tag:show.html.twig', array(
             'entity'      => $entity
-        ));
+            ));
     }
 
     /**
@@ -164,7 +166,7 @@ class TagController extends Controller
             'id'          => $id,
             'edit_form'   => $editForm->createView(),
             //'delete_form' => $deleteForm->createView(),
-        ));
+            ));
     }
 
     /**
@@ -179,7 +181,7 @@ class TagController extends Controller
         $form = $this->createForm(new TagType(), $entity, array(
             'action' => $this->generateUrl('tag_update', array('id' => $id)),
             'method' => 'PUT',
-        ));
+            ));
 
         $form->add('submit', 'submit', array('label' => 'Update'));
 
