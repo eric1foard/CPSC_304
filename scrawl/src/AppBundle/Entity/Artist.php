@@ -14,19 +14,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class Artists extends User
 {
-    /**
-    * @OneToOne(targetEntity="User", inversedby="artist")
-    * @JoinColumn(name="user_id", referencedColumnName="id")
-    **/
-    private $id;
 
     /**
-     * @ORM\Column(type="string", length=25, unique=falase)
+     * @ORM\Column(type="string", length=25, unique=false)
+     * @ORM\Id
      */
     private $preferredMedium;
 
     /**
-     * @ORM\Column(type=integer)
+     * @ORM\Column(type="string")
      */
     // unchanged from userId to userName
     private $confirmedBy;
