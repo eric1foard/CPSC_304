@@ -183,7 +183,7 @@ class UserController extends Controller
 
         $addressComponents = $json['results'][0]['address_components'];
 
-        $location = array (
+        $location = array(
             'postalCode' => $this->geolocationJSONParser($addressComponents, 'postal_code'),
             'streetAddress' => $this->geolocationJSONParser($addressComponents, 'street_number') . " " . $this->geolocationJSONParser($addressComponents, 'street_name'),
             'city' => $this->geolocationJSONParser($addressComponents, 'locality'),

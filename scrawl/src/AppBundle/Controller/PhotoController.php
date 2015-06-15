@@ -97,10 +97,15 @@ class PhotoController extends Controller
     {
         try{
             $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
-   
+//     echo '<pre>' ;
+//     var_dump($entity->getLatitude(), $entity->getLongitude());
+// echo '</pre>' ;
+// exit;
         }
         catch(\Exception $e){
+            
             return;
+
         }
 
         try{
@@ -155,14 +160,14 @@ class PhotoController extends Controller
         }
 
         $addressComponents = $json['results'][0]['address_components'];
-
-        $location = array (
+// var_dump($addressComponents); die;
+        $location = array(
             'postalCode' => $this->geolocationJSONParser($addressComponents, 'postal_code'),
             'streetAddress' => $this->geolocationJSONParser($addressComponents, 'street_number') . " " . $this->geolocationJSONParser($addressComponents, 'street_name'),
             'city' => $this->geolocationJSONParser($addressComponents, 'locality'),
             'region' => $this->geolocationJSONParser($addressComponents, 'administrative_area_level_1'),
             'country' => $this->geolocationJSONParser($addressComponents, 'country')
-        );
+        ); 
 
         return $location;
     }
