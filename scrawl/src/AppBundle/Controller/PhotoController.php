@@ -154,21 +154,6 @@ class PhotoController extends Controller
         return $location;
     }
 
-    public function testAction()
-    {
-        $sql = 'INSERT INTO scrawl_photos value(100, 1, "testing", "10 10 10", "50", "50")';
-
-        $stmt = $this->getDoctrine()->getManager()
-        ->getConnection()->prepare($sql);
-
-        $stmt->execute();
-
-        $this->get('session')->getFlashBag()
-        ->add('notice','from test action!');
-
-        return $this->redirectToRoute('homepage');
-    }
-
     /**
      * Creates a form to create a Photo entity.
      *
