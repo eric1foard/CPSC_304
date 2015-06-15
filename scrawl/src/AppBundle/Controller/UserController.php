@@ -63,6 +63,9 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            //save users's location in appropriate table
+            $this->persistGeolocationForUser($user);
+
             //encode password
             $encoderFactory = $this->get('security.encoder_factory');
             $encoder = $encoderFactory->getEncoder($user);
@@ -73,9 +76,6 @@ class UserController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-
-            //save users's location in appropriate table
-            $this->persistGeolocationForUser($user);
 
             return $this->redirect($this->generateUrl('user_show', array('id' => $user->getId())));
         }
@@ -95,7 +95,10 @@ class UserController extends Controller
             $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
         }
         catch(\Exception $e){
-            return;
+            $this->get('session')->getFlashBag()
+            ->add('error','issue decoding user specified location. Please try again.');
+
+            return $this->redirect($this->generateUrl('homepage'));
         }
 
         try{
