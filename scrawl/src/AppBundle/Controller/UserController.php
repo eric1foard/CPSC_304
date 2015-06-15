@@ -35,9 +35,16 @@ class UserController extends Controller
     public function indexAction()
     {
 
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_users';
 
-        $entities = $em->getRepository('AppBundle:User')->findAll();
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //execute query
+        $stmt->execute();
+
+        //get all rows of results 
+        $entities = $stmt->fetchAll();
 
         return $this->render('AppBundle:User:index.html.twig', array(
             'entities' => $entities,
@@ -57,25 +64,34 @@ class UserController extends Controller
             return $this->redirect($this->generateUrl('homepage'));
         }
 
-
         $user = new User();
         $form = $this->createCreateForm($user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+
             //save users's location in appropriate table
             $this->persistGeolocationForUser($user);
 
-            //encode password
-            $encoderFactory = $this->get('security.encoder_factory');
-            $encoder = $encoderFactory->getEncoder($user);
-            $password = $encoder->encodePassword($user->getPassword(), $user->getSalt());
-            $user->setPassword($password);
-
             //persist user to DB
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
+            $sql = 'INSERT INTO scrawl_users 
+            value(:username, :role, :password, :salt, :email, :lat, :lng, :self_sum)';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            //set path of photo to be username_somephoto
+            $stmt->bindValue('username', $form["username"]->getData());
+            $stmt->bindValue('role', 'ROLE_USER');
+            $stmt->bindValue('password', $this->encodePassword($user, $form["password"]->getData()));
+            $stmt->bindValue('salt', $user->getSalt());
+            $stmt->bindValue('email', $form["email"]->getData());
+            $stmt->bindValue('lat', $form["latitude"]->getData());
+            $stmt->bindValue('lng', $form["longitude"]->getData());
+            $stmt->bindValue('self_sum', $form["selfSummary"]->getData());
+            
+            //execute query
+            $stmt->execute();
 
             return $this->redirect($this->generateUrl('user_show', array('id' => $user->getId())));
         }
@@ -86,20 +102,31 @@ class UserController extends Controller
             ));
     }
 
+    //consume a user and the plain text password submitted in the 
+    //user create form and return the bcrypt encoded password
+    private function encodePassword($user, $password)
+    {
+        $encoderFactory = $this->get('security.encoder_factory');
+        $encoder = $encoderFactory->getEncoder($user);
+        $encoded = $encoder->encodePassword($password, $user->getSalt());
+
+        return $encoded;
+    }
+
         /**
     * Helper to save geolocation based on lat/long entry in User form
     **/
-    private function persistGeolocationForUser($entity)
-    {
-        try{
-            $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
-        }
-        catch(\Exception $e){
-            $this->get('session')->getFlashBag()
-            ->add('error','issue decoding user specified location. Please try again.');
+        private function persistGeolocationForUser($entity)
+        {
+            try{
+                $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
+            }
+            catch(\Exception $e){
+                $this->get('session')->getFlashBag()
+                ->add('error','issue decoding user specified location. Please try again.');
 
-            return $this->redirect($this->generateUrl('homepage'));
-        }
+                return $this->redirect($this->generateUrl('homepage'));
+            }
 
         try{
             // Insert into Locations1 table
@@ -220,19 +247,26 @@ class UserController extends Controller
      */
     public function showAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_users WHERE username=?';
 
-        $entity = $em->getRepository('AppBundle:User')->find($id);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
+
+        //execute query
+        $stmt->execute();
+
+        //get only row of result
+        $entity = $stmt->fetch();
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
         return $this->render('AppBundle:User:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+            'entity'      => $entity
             ));
     }
 
@@ -251,20 +285,32 @@ class UserController extends Controller
             return $this->redirect($this->generateUrl('homepage'));
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('AppBundle:User')->find($id);
+        $sql = 'SELECT * FROM scrawl_users WHERE username=?';
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
+        //execute query
+        $stmt->execute();
+        //get only row of result
+        $result = $stmt->fetch();
 
-        if (!$entity) {
+        if (!$result) {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
 
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $entity = new User();
+        $editForm = $this->createEditForm($entity, $id);
+
+        $editForm->get('username')->setData($result['username']);
+        $editForm->get('email')->setData($result['email']);
+        $editForm->get('latitude')->setData($result['latitude']);
+        $editForm->get('longitude')->setData($result['longitude']);
+        $editForm->get('selfSummary')->setData($result['selfSummary']);
 
         return $this->render('AppBundle:User:edit.html.twig', array(
             'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'edit_form'   => $editForm->createView()
             ));
     }
 
@@ -275,10 +321,10 @@ class UserController extends Controller
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(User $entity)
+    private function createEditForm(User $entity, $id)
     {
         $form = $this->createForm(new UserType(), $entity, array(
-            'action' => $this->generateUrl('user_update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('user_update', array('id' => $id)),
             'method' => 'PUT',
             ));
 
@@ -292,29 +338,78 @@ class UserController extends Controller
      */
     public function updateAction(Request $request, $id)
     {
-        $em = $this->getDoctrine()->getManager();
+        try
+        {
+            //get the hash of values passed to the form
+            $postParamsHash = $request->request->get('appbundle_user', 'does not exist!');
 
-        $entity = $em->getRepository('AppBundle:User')->find($id);
+            if (!$this->matchPasswords($postParamsHash['password']))
+            {
+                return $this->editAction($id);
+            }
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find User entity.');
+            //we already know 1st and 2nd passwords match, so just use 1st
+            $pass = $postParamsHash['password']['first'];
+            $loggedIn = $this->get('security.token_storage')->getToken()->getUser();
+            $encoded = $this->encodePassword($loggedIn, $pass);
+
+            //prepare rest of fields
+            $lat = $postParamsHash['latitude'];
+            $lng = $postParamsHash['longitude'];
+            $uname = $postParamsHash['username'];
+            $email = $postParamsHash['email'];
+            $selfSum = $postParamsHash['selfSummary'];
+
+            //WHERE statement must reference current uname (id passed to this fn)
+            //in case user has updated username
+            $sql = 'UPDATE scrawl_users 
+                    SET username=:uname, email=:email, latitude=:lat, 
+                    longitude=:lng, selfSummary=:selfSum, password_hash=:encoded 
+                    WHERE username=:id';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            //bind variables
+            $stmt->bindValue('uname', $uname);
+            $stmt->bindValue('email', $email);
+            $stmt->bindValue('lat', $lat);
+            $stmt->bindValue('lng', $lng);
+            $stmt->bindValue('selfSum', $selfSum);
+            $stmt->bindValue('encoded', $encoded);
+            $stmt->bindValue('id', $id);
+
+            //execute query
+            $stmt->execute();
+
+        }
+        catch (\Doctrine\DBAL\DBALException $e) {
+
+            $this->get('session')->getFlashBag()
+            ->add('error','there was a problem updating the user! Please try again.');
+
+            return $this->redirect($this->generateUrl('homepage'));
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
-        $editForm->handleRequest($request);
+        $this->get('session')->getFlashBag()
+        ->add('notice','user '.$uname. ' successfully updated!');
 
-        if ($editForm->isValid()) {
-            $em->flush();
+        return $this->redirect($this->generateUrl('user_show', array('id' => $uname)));
+    }
 
-            return $this->redirect($this->generateUrl('user_edit', array('id' => $id)));
+    //consumes array of first and second passwords submitted in form data
+    //produces true if passwords match and false otherwise
+    private function matchPasswords($passArray)
+    {
+        if (strcmp($passArray['first'], $passArray['second']) != 0)
+        {
+            $this->get('session')->getFlashBag()
+            ->add('error','passwords did not match!');
+
+            return false;
         }
 
-        return $this->render('AppBundle:User:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-            ));
+        return true;
     }
     /**
      * Deletes a User entity.
@@ -331,20 +426,16 @@ class UserController extends Controller
             return $this->redirect($this->generateUrl('homepage'));
         }
 
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
+        $sql = 'DELETE FROM scrawl_users WHERE username=?';
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('AppBundle:User')->find($id);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find User entity.');
-            }
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
 
-            $em->remove($entity);
-            $em->flush();
-        }
+        //execute query
+        $stmt->execute();
 
         return $this->redirect($this->generateUrl('user'));
     }
@@ -356,15 +447,6 @@ class UserController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-        ->setAction($this->generateUrl('user_delete', array('id' => $id)))
-        ->setMethod('DELETE')
-        ->add('submit', 'submit', array('label' => 'Delete'))
-        ->getForm()
-        ;
-    }
 
     //$user, $id --> boolean
     //return true if user is Admin, or
