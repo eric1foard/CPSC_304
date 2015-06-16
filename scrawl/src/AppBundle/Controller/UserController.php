@@ -197,14 +197,16 @@ class UserController extends Controller
     // type would be the keyword of the location that it looks through
     private function geolocationJSONParser($sourcearray, $keyword)
     {
-        if(stristr($sourcearray[$i]['types'][0], $keyword) != FALSE){
-            $val = '';
+        $val = '';
+        
             for($i = 0; $i < count($sourcearray); $i++){
-                if(strpos($sourcearray[$i]['types'][0], $keyword)>0){
-                    $val = $sourcearray[$i]['long_name'];
+                foreach ($sourcearray[$i]['types'] as $type) {
+                    if(stristr($type, $keyword)){
+                        $val = $sourcearray[$i]['long_name'];
+                    }
                 }
             }
-        }
+
         return $val;
     }
 
