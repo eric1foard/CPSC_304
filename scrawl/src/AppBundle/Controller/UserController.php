@@ -185,7 +185,7 @@ class UserController extends Controller
 
         $location = array(
             'postalCode' => $this->geolocationJSONParser($addressComponents, 'postal_code'),
-            'streetAddress' => $this->geolocationJSONParser($addressComponents, 'street_number') . " " . $this->geolocationJSONParser($addressComponents, 'street_name'),
+            'streetAddress' => $this->geolocationJSONParser($addressComponents, 'street_number') . " " . $this->geolocationJSONParser($addressComponents, 'route'),
             'city' => $this->geolocationJSONParser($addressComponents, 'locality'),
             'region' => $this->geolocationJSONParser($addressComponents, 'administrative_area_level_1'),
             'country' => $this->geolocationJSONParser($addressComponents, 'country')
@@ -198,10 +198,12 @@ class UserController extends Controller
     // type would be the keyword of the location that it looks through
     private function geolocationJSONParser($sourcearray, $keyword)
     {
-        $val = '';
-        for($i = 0; $i < count($sourcearray); $i++){
-            if(strpos($sourcearray[$i]['types'][0], $keyword)>0){
-                $val = $sourcearray[$i]['long_name'];
+        if(stristr($sourcearray[$i]['types'][0], $keyword) != FALSE){
+            $val = '';
+            for($i = 0; $i < count($sourcearray); $i++){
+                if(strpos($sourcearray[$i]['types'][0], $keyword)>0){
+                    $val = $sourcearray[$i]['long_name'];
+                }
             }
         }
         return $val;
