@@ -80,10 +80,13 @@ class PhotoController extends Controller
             //execute query
             $stmt->execute();
 
-            $tags = $request->request->get('appbundle_photo', 'does not exist!')['tags'];
 
+            $tags = $request->request->get('appbundle_photo', 'does not exist!')['tags'];
             //create relationships between photo and tags
             $this->createHasTagRecord($entity->getPath(), $tags);
+
+            $this->saveUploadUser($entity);
+
 
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
@@ -119,6 +122,25 @@ class PhotoController extends Controller
         }
         return;
     }
+
+    /**
+     * Save to uploaded_by table when user saves a photo
+     */
+    private function saveUploadUser($photo){
+        $sql = 'INSERT INTO uploaded_by value(:path, :username, :uploadDate)';
+
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //set path of photo to be username_somephoto
+        $stmt->bindValue('path', $photo->getPath());
+        $stmt->bindValue('username', $this->getLoggedInUser());
+        $stmt->bindValue('uploadDate', $photo->getUploadDate());
+
+        //execute query
+        $stmt->execute();
+    }
+
 
     /**
     * Helper to save geolocation based on lat/long entry in Photo form
