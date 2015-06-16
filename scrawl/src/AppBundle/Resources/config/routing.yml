@@ -31,6 +31,11 @@ ajax_photo_default:
     path:     /ajax/photos/default
     defaults: {_controller: AppBundle:Gallery:defaultGetPhotoPaths }
 
+ajax_update_view_data:
+    path:     /ajax/viewdata/update/{path}
+    defaults: {_controller: AppBundle:Photo:ajaxUpdateViewData }
+
+
 #################################
 ##            Security         ##
 #################################

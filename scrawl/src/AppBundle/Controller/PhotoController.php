@@ -106,7 +106,7 @@ class PhotoController extends Controller
     //has_tag for each tag
     private function createHasTagRecord($photoKey, $tags)
     {
-        
+
         foreach ($tags as $tag) {
             $sql = 'INSERT INTO has_tag value(:path, :tagName)';
 
@@ -230,13 +230,13 @@ class PhotoController extends Controller
     {
         $val = '';
         
-            for($i = 0; $i < count($sourcearray); $i++){
-                foreach ($sourcearray[$i]['types'] as $type) {
-                    if(stristr($type, $keyword)){
-                        $val = $sourcearray[$i]['long_name'];
-                    }
+        for($i = 0; $i < count($sourcearray); $i++){
+            foreach ($sourcearray[$i]['types'] as $type) {
+                if(stristr($type, $keyword)){
+                    $val = $sourcearray[$i]['long_name'];
                 }
             }
+        }
 
         return $val;
     }
@@ -458,63 +458,81 @@ class PhotoController extends Controller
         return $this->get('security.token_storage')->getToken()->getUser()->getId();
     }
 
+
+    //expose updateViewData to angular controller
+    public function ajaxUpdateViewDataAction(Request $request)
+    {
+        $photoPK = $request->attributes->get('path');
+        
+        try{
+           $this->updateViewData($photoPK); 
+
+           return new JsonResponse('success from ajaxUpdateViewDataAction!!');
+       }
+       catch(\Exception $e){
+
+        return new JsonResponse('problem from ajaxUpdateViewDataAction!!');
+
+    }
+}
+
     //increment the number of times a photo has been viewed and
     //update has_viewed relation to show that user has viewed 
     //tags associated with this photo
-    public function updateViewData($photoPK)
-    {
-        $username = $this->getLoggedInUser();
+public function updateViewData($photoPK)
+{
+    $username = $this->getLoggedInUser();
 
 
-        $this->incrementViewCount($photoPK);
-        $this->updateHasViewed($photoPK, $username);
-        return;
-    }
+    $this->incrementViewCount($photoPK);
+    $this->updateHasViewed($photoPK, $username);
+    return;
+}
 
     //increment the number of times a photo has been viewed
     //in scrawl_photos view count
-    public function incrementViewCount($photoPK)
-    {
-        $sql = 'UPDATE scrawl_photos SET viewCount=viewCount+1 WHERE path=:photoPK';
+public function incrementViewCount($photoPK)
+{
+    $sql = 'UPDATE scrawl_photos SET viewCount=viewCount+1 WHERE path=:photoPK';
 
-        $stmt = $this->getDoctrine()->getManager()
-        ->getConnection()->prepare($sql);
+    $stmt = $this->getDoctrine()->getManager()
+    ->getConnection()->prepare($sql);
 
-        $stmt->bindValue('photoPK', $photoPK);
+    $stmt->bindValue('photoPK', $photoPK);
 
-        $stmt->execute();
+    $stmt->execute();
 
-        return;
-    }
+    return;
+}
 
-    public function updateHasViewed($photoPK, $username)
-    {
+public function updateHasViewed($photoPK, $username)
+{
         //get all tags for this photo
-        $sql = 'SELECT tagName FROM has_tag WHERE path=:photoPK';
+    $sql = 'SELECT tagName FROM has_tag WHERE path=:photoPK';
 
-        $stmt = $this->getDoctrine()->getManager()
-        ->getConnection()->prepare($sql);
+    $stmt = $this->getDoctrine()->getManager()
+    ->getConnection()->prepare($sql);
 
-        $stmt->bindValue('photoPK', $photoPK);
-        $stmt->execute();
-        $tags = $stmt->fetchAll();
+    $stmt->bindValue('photoPK', $photoPK);
+    $stmt->execute();
+    $tags = $stmt->fetchAll();
 
         //create entries in has_viewed for each tag
-        foreach ($tags as $tag) {
+    foreach ($tags as $tag) {
 
-            $sql = 'INSERT INTO has_viewed(username, tagName, count) 
-            value(:username, :tag, 1)
-            ON DUPLICATE KEY UPDATE count=count+1';
+        $sql = 'INSERT INTO has_viewed(username, tagName, count) 
+        value(:username, :tag, 1)
+        ON DUPLICATE KEY UPDATE count=count+1';
 
-            $stmt = $this->getDoctrine()->getManager()
-            ->getConnection()->prepare($sql);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('tag', $tag['tagName']);
-            $stmt->bindValue('username', $username);
+        $stmt->bindValue('tag', $tag['tagName']);
+        $stmt->bindValue('username', $username);
 
-            $stmt->execute();
-
-        }
+        $stmt->execute();
 
     }
+
+}
 }

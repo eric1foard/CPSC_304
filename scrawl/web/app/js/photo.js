@@ -36,9 +36,17 @@ app.controller('PhotoCtrl', [ '$scope', '$http', '$modal', '$location',
 		};
 
 		$scope.getArtInfo = function(id) {
-			console.log("from getArtInfo " + id);
 
+			console.log("from getArtInfo " + id);
 			$scope.animationsEnabled = true;
+
+			$http.get('/ajax/viewdata/update/'+id).success(function (data){
+				console.log(data);
+
+			}).error(function (data) {
+				console.log(data);
+			});
+			
 			$http.get('/ajax/photo/'+ id).success(function (data){
 
 				$scope.artInfo = data;

@@ -178,6 +178,7 @@ class GalleryController extends Controller
 
 		$photoInfo = array(
 			"device" => $photo['device'],
+			"viewCount" => $photo['viewCount'],
 			"uploadDate" => $photo['uploadDate'],
 			"latitude" => $photo['latitude'],
 			"longitude" => $photo['longitude'],
