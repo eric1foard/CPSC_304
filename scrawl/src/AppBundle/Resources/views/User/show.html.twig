@@ -35,7 +35,8 @@
                 
                 <div ng-style="{'border':'solid 10px'}" class="a-card" ng-attr="[[card.key]]">
 
-                    <img 
+                    <img
+                    ng-click="mother.getArtInfo([[card.key]])" 
                     height="100%" width="100%" data-ng-src="[[card.value]]">
 
                 </div>
@@ -54,4 +55,26 @@
         </a>
     </li>
 </ul>
+
+
+<div ng-controller="PhotoCtrl">
+    <script type="text/ng-template" id="modal.html">
+    <div class="modal-header">
+    <h3 class="modal-title"><p>[[artInfo.device]]</p></h3>
+    </div>
+    <div class="modal-body">
+    <h4>date</h4>
+    <p>[[artInfo.uploadDate]]</p>
+    <h4>where?</h4>
+    <p>[[artInfo.latitude]] , [[artInfo.longitude]]</p> 
+
+    <img 
+    height="100%" width="100%" data-ng-src="[[artInfo.path]]">
+
+    </div>
+    <div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()">Close</button>
+    </div>
+    </script>
+</div>
 {% endblock %}
