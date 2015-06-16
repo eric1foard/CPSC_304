@@ -20,11 +20,37 @@ class GalleryController extends Controller
 	
 	public function getPhotoPathsAction()
 	{
-	 // if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) 
-	 // {
-  //      return $this->loggedInGalleryAction();
-  //   }
+		if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) 
+		{
+			return $this->loggedInGalleryAction();
+		}
 		return $this->anonymousGalleryAction();
+	}
+
+	public function loggedInGalleryAction()
+	{
+		$paths = array();
+
+		$sql = 'SELECT path From has_tag Where tagName IN (SELECT tagName From has_viewed WHERE username=:username ORDER BY count)';
+
+		$stmt = $this->getDoctrine()->getManager()
+		->getConnection()->prepare($sql);
+
+		$username = $this->get('security.token_storage')->getToken()->getUser()->getId();
+
+		$stmt->bindValue('username', $username);
+
+        //execute query
+		$stmt->execute();
+
+        //get all rows of results 
+		$entities = $stmt->fetchAll();
+
+		foreach ($entities as $entity) {
+			$paths[$entity['path']] = 'uploads/'.$entity['path'];
+		}
+
+		return new JsonResponse($entities);
 	}
 
 	public function anonymousGalleryAction()
@@ -52,9 +78,6 @@ class GalleryController extends Controller
 
 		return new JsonResponse($entities);
 	}
-
-
-
 
 	//simply gets all photo paths
 	public function defaultGetPhotoPathsAction()
