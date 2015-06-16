@@ -29,6 +29,19 @@
         </tbody>
     </table>
 
+    <div ng-controller="PhotoCtrl" class="col-md-8" data-ng-init="getUserPhotos()">
+
+            <div deckgrid class="deckgrid" source="userPhotos">
+                
+                <div ng-style="{'border':'solid 10px'}" class="a-card" ng-attr="[[card.key]]">
+
+                    <img 
+                    height="100%" width="100%" data-ng-src="[[card.value]]">
+
+                </div>
+            </div>
+        </div>
+
         <ul class="record_actions">
     <li>
         <a href="{{ path('user') }}">

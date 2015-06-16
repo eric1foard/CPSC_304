@@ -23,7 +23,13 @@ ajax_photo:
     path:     /ajax/photo/{id}
     defaults: {_controller: AppBundle:Gallery:getArt }
 
+ajax_photo_user:
+    path:     /ajax/userphotos/{username}
+    defaults: {_controller: AppBundle:Gallery:getUserPhotos }
 
+ajax_photo_default:
+    path:     /ajax/photos/default
+    defaults: {_controller: AppBundle:Gallery:defaultGetPhotoPaths }
 
 #################################
 ##            Security         ##
@@ -70,7 +76,7 @@ user_delete:
     defaults: {_controller: AppBundle:User:delete }
 
 user_show:
-    path:   /user/{id}
+    path:   /{id}
     defaults: {_controller: AppBundle:User:show }
 
 #################################

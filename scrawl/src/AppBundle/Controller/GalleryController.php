@@ -11,6 +11,12 @@ use AppBundle\Entity\Photo;
  * Gallery controller
  * Logic for selecting which set of photos to render in
  * response to a query for photos
+ *
+ * note that ALL methods are called AJAXly from the anjular controller photo.js
+ *
+ * in ALL cases, the response is a hash in which they key is the name of the photo file
+ * and the value is the path relative to the web directory (i.e., uploads/username_filename.filetye)
+ * so that the value can be passed directly to an HTML img directive in the view to render the photo
  */
 class GalleryController extends Controller
 {
@@ -77,6 +83,32 @@ class GalleryController extends Controller
 		}
 
 		return new JsonResponse($entities);
+	}
+
+	//consume a username and return a hash of photo paths
+	//that represent all photos uploaded by that user
+	public function getUserPhotosAction($username)
+	{
+		$paths = array();
+
+		$sql = 'SELECT * FROM uploaded_by WHERE username=:username';
+
+		$stmt = $this->getDoctrine()->getManager()
+		->getConnection()->prepare($sql);
+
+		$stmt->bindValue('username', $username);
+
+        //execute query
+		$stmt->execute();
+
+        //get all rows of results 
+		$entities = $stmt->fetchAll();
+
+		foreach ($entities as $entity) {
+			$paths[$entity['path']] = 'uploads/'.$entity['path'];
+		}
+
+		return new JsonResponse($paths);
 	}
 
 	//simply gets all photo paths
