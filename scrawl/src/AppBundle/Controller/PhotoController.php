@@ -70,6 +70,7 @@ class PhotoController extends Controller
 
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
+            var_dump($entity->getPath());die;
             $stmt->bindValue('device', $form["device"]->getData());
             //new photo only has 1 view
             $stmt->bindValue('viewCount', 1);
@@ -97,12 +98,9 @@ class PhotoController extends Controller
     **/
     private function persistGeolocationForPhoto($entity)
     {
-        try{
+        try
+        {
             $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
-//     echo '<pre>' ;
-//     var_dump($entity->getLatitude(), $entity->getLongitude());
-// echo '</pre>' ;
-// exit;
         }
         catch(\Exception $e){
 
@@ -110,7 +108,8 @@ class PhotoController extends Controller
 
         }
 
-        try{
+        try
+        {
             // Insert into Locations1 table
             $sql = 'INSERT INTO scrawl_locations1
             value(:postalCode, :country, :region, :city)';
@@ -141,7 +140,8 @@ class PhotoController extends Controller
             //execute query
             $stmt2->execute();
         }
-        catch (\Doctrine\DBAL\DBALException $e) { // Should check for more specific exception
+        catch (\Doctrine\DBAL\DBALException $e) 
+        { // Should check for more specific exception
             // duplicate entry. Entry we want already in the table. Everything is good.
         }
 
@@ -370,59 +370,6 @@ class PhotoController extends Controller
         $stmt->execute();
 
         return $this->redirect($this->generateUrl('photo'));
-    }
-
-    /**
-     * Creates a form to delete a Photo entity by id.
-     *
-     * @param mixed $id The entity id
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-
-    //create a JSON response to ajaxly return all photo
-    //filepaths so that we can render photos with ng-repeat
-    public function getPhotoPathsAction()
-    {
-        $paths = array();
-        $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('AppBundle:Photo')->findAll();
-
-        foreach ($entities as $entity) {
-            $paths[$entity->getID()] = $entity->getWebPath();
-        }
-        return new JsonResponse($paths);
-    }
-
-    //return all latlons to display map markers
-    public function getLatLonsAction()
-    {
-        $geos = array();
-
-        $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('AppBundle:Photo')->findAll();
-
-        foreach ($entities as $entity) {
-            $geos[$entity->getID()] = [$entity->getLatitude(), $entity->getLongitude()];
-        }
-        return new JsonResponse($geos);
-
-    }
-
-    //consumes a photo id and produces a JSON representation of the Photo object
-    public function getArtAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $photo = $em->getRepository('AppBundle:Photo')->find($id);
-
-        $photoInfo = array(
-            "id" => $photo->getId(),
-            "latitude" => $photo->getLatitude(),
-            "longitude" => $photo->getLongitude(),
-            "path" => $photo->getWebPath()
-            );
-
-        return new JsonResponse($photoInfo);
     }
 
     public function getLoggedInUser()

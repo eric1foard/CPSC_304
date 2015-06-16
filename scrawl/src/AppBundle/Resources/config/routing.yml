@@ -13,15 +13,15 @@ homepage:
 
 ajax_photos:
     path:     /ajax/photos
-    defaults: {_controller: AppBundle:Photo:getPhotoPaths }
+    defaults: {_controller: AppBundle:Gallery:getPhotoPaths }
 
 ajax_latlon:
     path:     /ajax/latlon
-    defaults: {_controller: AppBundle:Photo:getLatLons }
+    defaults: {_controller: AppBundle:Gallery:getLatLons }
 
 ajax_photo:
     path:     /ajax/photo/{id}
-    defaults: {_controller: AppBundle:Photo:getArt }
+    defaults: {_controller: AppBundle:Gallery:getArt }
 
 
 
