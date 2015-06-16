@@ -178,10 +178,8 @@ class Photo
     {
     // the file property can be empty if the field is not required
         if (null === $this->getFile()) {
-            var_dump("file was null");
             return;
         }
-        var_dump("file was NOT NOT NOT null");
     // use the original file name here but you should
     // sanitize it at least to avoid any security issues
 
@@ -189,18 +187,23 @@ class Photo
     // target filename to move to
         $this->getFile()->move(
             $this->getUploadRootDir(),
-            $user_id.'_'.$this->getFile()->getClientOriginalName()
+            $user_id.'_'.$this->removeSpaces($this->getFile()->getClientOriginalName())
             );
 
     // set the path property to the filename where you've saved the file
-        $this->path = $user_id.'_'.$this->getFile()->getClientOriginalName();
+        $this->path = $user_id.'_'.$this->removeSpaces($this->getFile()->getClientOriginalName());
 
     // clean up the file property as you won't need it anymore
         $this->file = null;
 
-        var_dump($this->getAbsolutePath());
-
     }
+
+    private function removeSpaces($string)
+    {
+        $string = str_replace(' ', '', $string);
+        return $string;
+    }
+
 
         public static function loadValidatorMetadata(ClassMetadata $metadata)
     {

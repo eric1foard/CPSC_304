@@ -44,13 +44,13 @@
 <div ng-controller="PhotoCtrl">
 	<script type="text/ng-template" id="modal.html">
 	<div class="modal-header">
-	<h3 class="modal-title"><p>[[artInfo.latitude]]</p></h3>
+	<h3 class="modal-title"><p>[[artInfo.device]]</p></h3>
 	</div>
 	<div class="modal-body">
 	<h4>date</h4>
 	<p>[[artInfo.uploadDate]]</p>
-	<h4>longitude</h4>
-	<p>[[artInfo.longitude]]</p> 
+	<h4>where?</h4>
+	<p>[[artInfo.latitude]] , [[artInfo.longitude]]</p> 
 
 	<img 
 	height="100%" width="100%" data-ng-src="[[artInfo.path]]">

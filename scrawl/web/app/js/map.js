@@ -13,10 +13,14 @@ app.controller('MapCtrl', ['$scope', '$http',
 					focus: false,
 					icon: {}
 				};
+
+				console.log('GEOS key' + key);
+				console.log('GEOS lat' + geos[key].lat);
+				console.log('GEOS lng' + geos[key].lng);
+
 			});
 			$scope.geos = geos;
 		});
-
 
 		$scope.highlight = function(marker_id){
 

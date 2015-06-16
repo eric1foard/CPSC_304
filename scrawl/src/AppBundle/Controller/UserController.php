@@ -19,7 +19,6 @@ class UserController extends Controller
 
     public function homepageAction()
     {
-
         $entity = new User();
         $form = $this->createCreateForm($entity);
 
