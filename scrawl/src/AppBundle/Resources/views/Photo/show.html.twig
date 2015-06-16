@@ -11,7 +11,7 @@
         <tbody>
             <tr>
                 <th>Id</th>
-                <td>{{ entity.id }}</td>
+                <td>{{ entity.path }}</td>
             </tr>
              <tr>
                 <th>latitude</th>
@@ -35,11 +35,11 @@
         </a>
     </li>
     <li>
-        <a href="{{ path('photo_edit', { 'id': entity.id }) }}">
+        <a href="{{ path('photo_edit', { 'id': entity.path }) }}">
             Edit
         </a>
     </li>
-    <a href="{{ path('photo_delete', { 'id': entity.id }) }}">
+    <a href="{{ path('photo_delete', { 'id': entity.path }) }}">
             Delete
         </a>
 

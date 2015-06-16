@@ -241,7 +241,7 @@ class PhotoController extends Controller
     public function showAction($id)
     {
 
-        $sql = 'SELECT * FROM scrawl_photos WHERE id=?';
+        $sql = 'SELECT * FROM scrawl_photos WHERE path=?';
 
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);

@@ -34,11 +34,10 @@ class Photo
      */
     private $uploadDate;
 
-
     /**
-     * @Assert\File(maxSize="6000000")
+     * @ORM\Column(type="integer", unique=false)
      */
-    private $file;
+    private $viewCount;
 
     /**
      * @ORM\Column(type="float", nullable=true)
@@ -50,10 +49,18 @@ class Photo
      */
     private $longitude;
 
+
+    // These fields are not included in the schema; they are temporary.
+
     /** @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", inversedBy="photos")
     *   @ORM\JoinTable(name="has_tag")
     */
     public $tags;
+
+    /**
+     * @Assert\File(maxSize="6000000")
+     */
+    private $file;
 
 
 
