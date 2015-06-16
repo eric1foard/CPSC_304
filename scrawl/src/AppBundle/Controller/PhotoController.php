@@ -497,7 +497,6 @@ class PhotoController extends Controller
         $stmt->execute();
         $tags = $stmt->fetchAll();
 
-
         //create entries in has_viewed for each tag
         foreach ($tags as $tag) {
 
@@ -508,11 +507,11 @@ class PhotoController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            
             $stmt->bindValue('tag', $tag['tagName']);
             $stmt->bindValue('username', $username);
 
             $stmt->execute();
+
         }
 
     }
