@@ -59,7 +59,9 @@ class PhotoController extends Controller
 
         if ($form->isValid()) {
 
-            $this->persistGeolocationForPhoto($entity);
+            // $this->persistGeolocationForPhoto($entity);
+            // $this->forward('app.geocode_controller:persistLocation', array('latitude' => $entity->getLatitude(), 'longitude' => $entity->getLongitude()));
+            $this->container->get('app.geocode_controller:persistLocation', array('latitude' => $entity->getLatitude(), 'longitude' => $entity->getLongitude()));
 
             $entity->upload($this->getLoggedInUser());
 
@@ -95,97 +97,97 @@ class PhotoController extends Controller
     /**
     * Helper to save geolocation based on lat/long entry in Photo form
     **/
-    private function persistGeolocationForPhoto($entity)
-    {
-        try{
-            $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
-//     echo '<pre>' ;
-//     var_dump($entity->getLatitude(), $entity->getLongitude());
-// echo '</pre>' ;
-// exit;
-        }
-        catch(\Exception $e){
+//     private function persistGeolocationForPhoto($entity)
+//     {
+//         try{
+//             $location = $this->reverseGeocode($entity->getLatitude(), $entity->getLongitude());
+// //     echo '<pre>' ;
+// //     var_dump($entity->getLatitude(), $entity->getLongitude());
+// // echo '</pre>' ;
+// // exit;
+//         }
+//         catch(\Exception $e){
 
-            return;
+//             return;
 
-        }
+//         }
 
-        try{
-            // Insert into Locations1 table
-            $sql = 'INSERT INTO scrawl_locations1
-            value(:postalCode, :country, :region, :city)';
+//         try{
+//             // Insert into Locations1 table
+//             $sql = 'INSERT INTO scrawl_locations1
+//             value(:postalCode, :country, :region, :city)';
 
-            $stmt = $this->getDoctrine()->getManager()
-            ->getConnection()->prepare($sql);
+//             $stmt = $this->getDoctrine()->getManager()
+//             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('postalCode', $location['postalCode']);
-            $stmt->bindValue('country', $location['country']);
-            $stmt->bindValue('region', $location["region"]);
-            $stmt->bindValue('city', $location["city"]);
+//             $stmt->bindValue('postalCode', $location['postalCode']);
+//             $stmt->bindValue('country', $location['country']);
+//             $stmt->bindValue('region', $location["region"]);
+//             $stmt->bindValue('city', $location["city"]);
 
-            //execute query
-            $stmt->execute();
+//             //execute query
+//             $stmt->execute();
 
-            // Insert into Locations2 tables
-            $sql2 = 'INSERT INTO scrawl_locations2
-            value(:latitude, :longitude, :postalCode, :streetAddress)';
+//             // Insert into Locations2 tables
+//             $sql2 = 'INSERT INTO scrawl_locations2
+//             value(:latitude, :longitude, :postalCode, :streetAddress)';
 
-            $stmt2 = $this->getDoctrine()->getManager()
-            ->getConnection()->prepare($sql2);
+//             $stmt2 = $this->getDoctrine()->getManager()
+//             ->getConnection()->prepare($sql2);
 
-            $stmt2->bindValue('latitude', $entity->getLatitude());
-            $stmt2->bindValue('longitude', $entity->getLongitude());
-            $stmt2->bindValue('postalCode', $location['postalCode']);
-            $stmt2->bindValue('streetAddress', $location["streetAddress"]);
+//             $stmt2->bindValue('latitude', $entity->getLatitude());
+//             $stmt2->bindValue('longitude', $entity->getLongitude());
+//             $stmt2->bindValue('postalCode', $location['postalCode']);
+//             $stmt2->bindValue('streetAddress', $location["streetAddress"]);
 
-            //execute query
-            $stmt2->execute();
-        }
-        catch (\Doctrine\DBAL\DBALException $e) { // Should check for more specific exception
-            // duplicate entry. Entry we want already in the table. Everything is good.
-        }
+//             //execute query
+//             $stmt2->execute();
+//         }
+//         catch (\Doctrine\DBAL\DBALException $e) { // Should check for more specific exception
+//             // duplicate entry. Entry we want already in the table. Everything is good.
+//         }
 
-        $this->get('session')->getFlashBag()
-        ->add('notice','photo location successfully saved!');
-    }
+//         $this->get('session')->getFlashBag()
+//         ->add('notice','photo location successfully saved!');
+//     }
 
-    private function reverseGeocode($lat, $lon){
-        $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" . $lat . "," . $lon;
+//     private function reverseGeocode($lat, $lon){
+//         $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" . $lat . "," . $lon;
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $json = json_decode(curl_exec($ch), true);
+//         $ch = curl_init();
+//         curl_setopt($ch, CURLOPT_URL, $url);
+//         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+//         $json = json_decode(curl_exec($ch), true);
 
-        if ($json['status'] == 'ZERO_RESULTS'){
-            throw new Exception("Issues decoding specified photo location", 1);
-        }
+//         if ($json['status'] == 'ZERO_RESULTS'){
+//             throw new Exception("Issues decoding specified photo location", 1);
+//         }
 
-        $addressComponents = $json['results'][0]['address_components'];
-// var_dump($addressComponents); die;
-        $location = array(
-            'postalCode' => $this->geolocationJSONParser($addressComponents, 'postal_code'),
-            'streetAddress' => $this->geolocationJSONParser($addressComponents, 'street_number') . " " . $this->geolocationJSONParser($addressComponents, 'street_name'),
-            'city' => $this->geolocationJSONParser($addressComponents, 'locality'),
-            'region' => $this->geolocationJSONParser($addressComponents, 'administrative_area_level_1'),
-            'country' => $this->geolocationJSONParser($addressComponents, 'country')
-            ); 
+//         $addressComponents = $json['results'][0]['address_components'];
+// // var_dump($addressComponents); die;
+//         $location = array(
+//             'postalCode' => $this->geolocationJSONParser($addressComponents, 'postal_code'),
+//             'streetAddress' => $this->geolocationJSONParser($addressComponents, 'street_number') . " " . $this->geolocationJSONParser($addressComponents, 'street_name'),
+//             'city' => $this->geolocationJSONParser($addressComponents, 'locality'),
+//             'region' => $this->geolocationJSONParser($addressComponents, 'administrative_area_level_1'),
+//             'country' => $this->geolocationJSONParser($addressComponents, 'country')
+//             ); 
 
-        return $location;
-    }
+//         return $location;
+//     }
 
-    // int would be the ith array it loops through
-    // type would be the keyword of the location that it looks through
-    private function geolocationJSONParser($sourcearray, $keyword)
-    {
-        $val = '';
-        for($i = 0; $i < count($sourcearray); $i++){
-            if(strpos($sourcearray[$i]['types'][0], $keyword)>0){
-                $val = $sourcearray[$i]['long_name'];
-            }
-        }
-        return $val;
-    }
+    // // int would be the ith array it loops through
+    // // type would be the keyword of the location that it looks through
+    // private function geolocationJSONParser($sourcearray, $keyword)
+    // {
+    //     $val = '';
+    //     for($i = 0; $i < count($sourcearray); $i++){
+    //         if(strpos($sourcearray[$i]['types'][0], $keyword)>0){
+    //             $val = $sourcearray[$i]['long_name'];
+    //         }
+    //     }
+    //     return $val;
+    // }
 
     /**
      * Creates a form to create a Photo entity.
