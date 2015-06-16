@@ -6,7 +6,6 @@
     <table class="records_list">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>path</th>
                 <th>Uploaddate</th>
                 <th>Actions</th>
@@ -15,15 +14,15 @@
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td><a href="{{ path('photo_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td><a href="{{ path('photo_show', { 'id': entity.path }) }}">{{ entity.path }}</a></td>
                 <td>{{ entity.uploadDate }}</td>
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('photo_show', { 'id': entity.id }) }}">show</a>
+                        <a href="{{ path('photo_show', { 'id': entity.path }) }}">show</a>
                     </li>
                     <li>
-                        <a href="{{ path('photo_edit', { 'id': entity.id }) }}">edit</a>
+                        <a href="{{ path('photo_edit', { 'id': entity.path }) }}">edit</a>
                     </li>
                 </ul>
                 </td>
