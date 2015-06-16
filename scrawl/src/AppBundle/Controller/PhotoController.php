@@ -63,14 +63,16 @@ class PhotoController extends Controller
 
             $entity->upload($this->getLoggedInUser());
 
-            $sql = 'INSERT INTO scrawl_photos value(:path, :user_id, :uploadDate, :latitude, :longitude)';
+            $sql = 'INSERT INTO scrawl_photos value(:path, :device, :viewCount, :uploadDate, :latitude, :longitude)';
 
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
-            $stmt->bindValue('user_id', $this->getLoggedInUser());
+            $stmt->bindValue('device', $form["device"]->getData());
+            //new photo only has 1 view
+            $stmt->bindValue('viewCount', 1);
             $stmt->bindValue('uploadDate', date('Y-m-d'));
             $stmt->bindValue('latitude', $form["latitude"]->getData());
             $stmt->bindValue('longitude', $form["longitude"]->getData());
@@ -103,7 +105,7 @@ class PhotoController extends Controller
 // exit;
         }
         catch(\Exception $e){
-            
+
             return;
 
         }
@@ -111,8 +113,8 @@ class PhotoController extends Controller
         try{
             // Insert into Locations1 table
             $sql = 'INSERT INTO scrawl_locations1
-                    value(:postalCode, :country, :region, :city)';
-        
+            value(:postalCode, :country, :region, :city)';
+
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
@@ -126,8 +128,8 @@ class PhotoController extends Controller
 
             // Insert into Locations2 tables
             $sql2 = 'INSERT INTO scrawl_locations2
-                    value(:latitude, :longitude, :postalCode, :streetAddress)';
-        
+            value(:latitude, :longitude, :postalCode, :streetAddress)';
+
             $stmt2 = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql2);
 
@@ -167,7 +169,7 @@ class PhotoController extends Controller
             'city' => $this->geolocationJSONParser($addressComponents, 'locality'),
             'region' => $this->geolocationJSONParser($addressComponents, 'administrative_area_level_1'),
             'country' => $this->geolocationJSONParser($addressComponents, 'country')
-        ); 
+            ); 
 
         return $location;
     }
@@ -183,21 +185,6 @@ class PhotoController extends Controller
             }
         }
         return $val;
-    }
-
-    public function testAction()
-    {
-        $sql = 'INSERT INTO scrawl_photos value(100, 1, "testing", "10 10 10", "50", "50")';
-
-        $stmt = $this->getDoctrine()->getManager()
-        ->getConnection()->prepare($sql);
-
-        $stmt->execute();
-
-        $this->get('session')->getFlashBag()
-        ->add('notice','from test action!');
-
-        return $this->redirectToRoute('homepage');
     }
 
     /**
@@ -275,6 +262,7 @@ class PhotoController extends Controller
     public function editAction($id)
     {
         $sql = 'SELECT * FROM scrawl_photos WHERE path=?';
+
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
         //replace ? in query with $id
@@ -291,6 +279,7 @@ class PhotoController extends Controller
         //set edit form fields to data from query
         $editForm->get('latitude')->setData($result['latitude']);
         $editForm->get('longitude')->setData($result['longitude']);
+        $editForm->get('device')->setData($result['device']);
 
 
         return $this->render('AppBundle:Photo:edit.html.twig', array(
@@ -333,8 +322,9 @@ class PhotoController extends Controller
 
             $lat = $postParamsHash['latitude'];
             $lng = $postParamsHash['longitude'];
+            $lng = $postParamsHash['device'];
 
-            $sql = 'UPDATE scrawl_photos SET latitude=:lat, longitude=:lng WHERE path=:path';
+            $sql = 'UPDATE scrawl_photos SET device=:device, latitude=:lat, longitude=:lng WHERE path=:path';
 
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
@@ -343,6 +333,8 @@ class PhotoController extends Controller
             $stmt->bindValue('path', $id);
             $stmt->bindValue('lat', $lat);
             $stmt->bindValue('lng', $lng);
+            $stmt->bindValue('device', $device);
+
 
      //execute query
             $stmt->execute();

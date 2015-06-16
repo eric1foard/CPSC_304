@@ -18,6 +18,7 @@ class PhotoType extends AbstractType
             ->add('file')
             ->add('latitude')
             ->add('longitude')
+            ->add('device')
             ->add('tags', 'entity', array(
                 'class' => 'AppBundle:Tag',
                 'property' => 'tagName',
