@@ -470,7 +470,7 @@ class PhotoController extends Controller
 
     public function getLoggedInUser()
     {
-        return $this->get('security.token_storage')->getToken()->getUser();
+        return $this->get('security.token_storage')->getToken()->getUser()->getId();
     }
 
     //increment the number of times a photo has been viewed and
