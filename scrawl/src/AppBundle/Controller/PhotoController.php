@@ -306,35 +306,50 @@ class PhotoController extends Controller
             throw $this->createNotFoundException('Unable to find Photo entity.');
         }
 
+        $sql2 = 'SELECT tagName FROM has_tag WHERE path=?';
+
+        $stmt2 = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql2);
+
+        //replace ? in query with $id
+        $stmt2->bindValue(1, $id);
+
+        //execute query
+        $stmt2->execute();
+
+        //get only row of result
+        $alltags = $stmt2->fetchAll();
+        foreach ($alltags as $tag) {
+            $tags = $tag['tagName'] . ";";
+        }
+
         return $this->render('AppBundle:Photo:show.html.twig', array(
             'entity'         => $entity,
             'uploadLocation' => $uploadLocation,
+            'tags'           => $tags,
             ));
     }
 
-    // public function getPhotoTags($photoPK)
-    // {
-    //     $sql = 'SELECT tagName FROM has_tag WHERE path=:photoPK';
+    public function getPhotoTags($photoPK)
+    {
+        $sql = 'SELECT tagName FROM has_tag WHERE path=:photoPK';
 
-    //     $stmt = $this->getDoctrine()->getManager()
-    //     ->getConnection()->prepare($sql);
+        $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 
-    //     $stmt->bindValue('photoPK', $photoPK);
+        $stmt->bindValue('photoPK', $photoPK);
 
-    //     $stmt->execute();
+        $stmt->execute();
 
-    //     //get all results
-    //     $tags = $stmt->fetchAll();
+        //get all results
+        $tags = $stmt->fetchAll();
 
-    //     $result = [];
-    //     foreach ($tags as $key => $value) {
-    //         array_push($result, $value);
+        $result = [];
+        foreach ($tags as $key => $value) {
+        array_push($result, $value);
+        }
 
-    //     }
-
-    //     return $result;
-
-    // }
+        return $result;
+    }
 
     /**
      * Displays a form to edit an existing Photo entity.
