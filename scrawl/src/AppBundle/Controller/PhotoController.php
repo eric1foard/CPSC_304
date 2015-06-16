@@ -82,6 +82,7 @@ class PhotoController extends Controller
 
 
             $tags = $request->request->get('appbundle_photo', 'does not exist!')['tags'];
+
             //create relationships between photo and tags
             $this->createHasTagRecord($entity->getPath(), $tags);
 
@@ -105,8 +106,7 @@ class PhotoController extends Controller
     //has_tag for each tag
     private function createHasTagRecord($photoKey, $tags)
     {
-        ;
-
+        
         foreach ($tags as $tag) {
             $sql = 'INSERT INTO has_tag value(:path, :tagName)';
 
@@ -297,6 +297,7 @@ class PhotoController extends Controller
         //pass upload dir to view to use as img src
         $uploadLocation = 'uploads/'.$entity['path'];
 
+        
         //update view statistics
         $this->updateViewData($id);
 
@@ -439,6 +440,7 @@ class PhotoController extends Controller
     {
         $username = $this->getLoggedInUser();
 
+
         $this->incrementViewCount($photoPK);
         $this->updateHasViewed($photoPK, $username);
         return;
@@ -472,6 +474,7 @@ class PhotoController extends Controller
         $stmt->execute();
         $tags = $stmt->fetchAll();
 
+
         //create entries in has_viewed for each tag
         foreach ($tags as $tag) {
 
@@ -482,10 +485,12 @@ class PhotoController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('tag', $tag);
+            
+            $stmt->bindValue('tag', $tag['tagName']);
             $stmt->bindValue('username', $username);
 
             $stmt->execute();
         }
+
     }
 }
