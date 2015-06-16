@@ -297,9 +297,12 @@ class PhotoController extends Controller
         //pass upload dir to view to use as img src
         $uploadLocation = 'uploads/'.$entity['path'];
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Photo entity.');
-        }
+        //update view statistics
+        $this->updateViewData($id);
+
+        // if (!$entity) {
+        //     throw $this->createNotFoundException('Unable to find Photo entity.');
+        // }
 
         return $this->render('AppBundle:Photo:show.html.twig', array(
             'entity'         => $entity,
@@ -429,4 +432,60 @@ class PhotoController extends Controller
         return $this->get('security.token_storage')->getToken()->getUser()->getId();
     }
 
+    //increment the number of times a photo has been viewed and
+    //update has_viewed relation to show that user has viewed 
+    //tags associated with this photo
+    public function updateViewData($photoPK)
+    {
+        $username = $this->getLoggedInUser();
+
+        $this->incrementViewCount($photoPK);
+        $this->updateHasViewed($photoPK, $username);
+        return;
+    }
+
+    //increment the number of times a photo has been viewed
+    //in scrawl_photos view count
+    public function incrementViewCount($photoPK)
+    {
+        $sql = 'UPDATE scrawl_photos SET viewCount=viewCount+1 WHERE path=:photoPK';
+
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        $stmt->bindValue('photoPK', $photoPK);
+
+        $stmt->execute();
+
+        return;
+    }
+
+    public function updateHasViewed($photoPK, $username)
+    {
+        //get all tags for this photo
+        $sql = 'SELECT tagName FROM has_tag WHERE path=:photoPK';
+
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        $stmt->bindValue('photoPK', $photoPK);
+        $stmt->execute();
+        $tags = $stmt->fetchAll();
+
+        //create entries in has_viewed for each tag
+        foreach ($tags as $tag) {
+
+            $sql = 'INSERT INTO has_viewed(username, tagName, count) 
+            value(:username, :tag, 1)
+            ON DUPLICATE KEY UPDATE count=count+1';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            $stmt->bindValue('tag', $tag);
+            $stmt->bindValue('username', $username);
+
+            $stmt->execute();
+        }
+    }
 }
