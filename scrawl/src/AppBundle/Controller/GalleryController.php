@@ -56,7 +56,7 @@ class GalleryController extends Controller
 			$paths[$entity['path']] = 'uploads/'.$entity['path'];
 		}
 
-		return new JsonResponse($entities);
+		return new JsonResponse($paths);
 	}
 
 	public function anonymousGalleryAction()
@@ -82,7 +82,7 @@ class GalleryController extends Controller
 			$paths[$entity['path']] = 'uploads/'.$entity['path'];
 		}
 
-		return new JsonResponse($entities);
+		return new JsonResponse($paths);
 	}
 
 	//consume a username and return a hash of photo paths
@@ -91,7 +91,7 @@ class GalleryController extends Controller
 	{
 		$paths = array();
 
-		$sql = 'SELECT * FROM uploaded_by WHERE username=:username';
+		$sql = 'SELECT path FROM uploaded_by WHERE username=:username';
 
 		$stmt = $this->getDoctrine()->getManager()
 		->getConnection()->prepare($sql);

@@ -5,7 +5,7 @@ app.controller('PhotoCtrl', [ '$scope', '$http', '$modal', '$location',
 		var userPhotos = [];
 
 
-		$http.get('/ajax/photos/default').success(function(data){
+		$http.get('/ajax/photos').success(function(data){
 
 			angular.forEach(data, function(value, key){
 				photos.push({value, key});
