@@ -46,19 +46,23 @@ class TagController extends Controller
      */
     public function createAction(Request $request)
     {
+        //instantiate Tag so we can create form
         $entity = new Tag();
         $form = $this->createCreateForm($entity);
+
+        //performs type checking
         $form->handleRequest($request);
 
         if ($form->isValid()) {
 
-
             $sql = 'INSERT INTO scrawl_tags value(:tagName, :user)';
+
+            //pass sql to DBMS
             $stmt = $this->getDoctrine()->getManager()->getConnection()->prepare($sql);
 
+            //bind variables to query
             $stmt->bindValue('tagName', $form['tagName']->getData());
-            $stmt->bindValue('user', $this->get('security.token_storage')->getToken()->getUser());
-
+            $stmt->bindValue('user', $this->get('security.token_storage')->getToken()->getUsername());
 
             $stmt->execute();            
 
@@ -66,7 +70,7 @@ class TagController extends Controller
             return $this->redirect($this->generateUrl('tag_show', array('id' => $entity->getId())));
         }
 
-        $this->get('session')->getFlashBag()->add('notice','tag addition error, please try again');
+        $this->get('session')->getFlashBag()->add('error','problem creating tag, please try again');
         return $this->render('AppBundle:Tag:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
