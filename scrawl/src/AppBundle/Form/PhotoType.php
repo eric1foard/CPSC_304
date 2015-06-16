@@ -22,6 +22,8 @@ class PhotoType extends AbstractType
             ->add('tags', 'entity', array(
                 'class' => 'AppBundle:Tag',
                 'property' => 'tagName',
+                'expanded' => true,
+                'multiple' => true
                 ));
     }
     

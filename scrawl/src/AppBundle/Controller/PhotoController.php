@@ -70,7 +70,6 @@ class PhotoController extends Controller
 
             //set path of photo to be username_somephoto
             $stmt->bindValue('path', $entity->getPath());
-            var_dump($entity->getPath());die;
             $stmt->bindValue('device', $form["device"]->getData());
             //new photo only has 1 view
             $stmt->bindValue('viewCount', 1);
@@ -80,6 +79,11 @@ class PhotoController extends Controller
 
             //execute query
             $stmt->execute();
+
+            $tags = $request->request->get('appbundle_photo', 'does not exist!')['tags'];
+
+            //create relationships between photo and tags
+            $this->createHasTagRecord($entity->getPath(), $tags);
 
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
@@ -91,6 +95,29 @@ class PhotoController extends Controller
         ->add('error','oops! something went wrong. Try again!');
 
         return $this->redirectToRoute('homepage');
+    }
+
+    //consume a string representing the PK of the photo
+    //and an array of tags and create a record in the
+    //has_tag for each tag
+    private function createHasTagRecord($photoKey, $tags)
+    {
+        ;
+
+        foreach ($tags as $tag) {
+            $sql = 'INSERT INTO has_tag value(:path, :tagName)';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            //set path of photo to be username_somephoto
+            $stmt->bindValue('path', $photoKey);
+            $stmt->bindValue('tagName', $tag);
+
+            //execute query
+            $stmt->execute();
+        }
+        return;
     }
 
     /**
