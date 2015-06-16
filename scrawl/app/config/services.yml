@@ -6,3 +6,4 @@ parameters:
 services:
     app.geocode_controller:
         class: AppBundle\Controller\GeocodeController
+      # arguments: [ @doctrine.orm.entity_manager ]
