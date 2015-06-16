@@ -297,7 +297,6 @@ class PhotoController extends Controller
         //pass upload dir to view to use as img src
         $uploadLocation = 'uploads/'.$entity['path'];
 
-        
         //update view statistics
         $this->updateViewData($id);
 
@@ -500,7 +499,7 @@ class PhotoController extends Controller
 
 
         //create entries in has_viewed for each tag
-        foreach ($tags as $tag['tagName']) {
+        foreach ($tags as $tag) {
 
             $sql = 'INSERT INTO has_viewed(username, tagName, count) 
             value(:username, :tag, 1)

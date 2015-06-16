@@ -17,7 +17,47 @@ class GalleryController extends Controller
 
 	//create a JSON response to ajaxly return all photo
     //filepaths so that we can render photos with ng-repeat
+	
 	public function getPhotoPathsAction()
+	{
+	 // if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) 
+	 // {
+  //      return $this->loggedInGalleryAction();
+  //   }
+		return $this->anonymousGalleryAction();
+	}
+
+	public function anonymousGalleryAction()
+	{
+		$paths = array();
+
+		$sql = 'SELECT sp.path, MAX(sp.viewCount) AS count 
+		FROM scrawl_photos sp, scrawl_locations1 l1, scrawl_locations2 l2 
+		WHERE sp.latitude = l2.latitude AND sp.longitude = l2.longitude 
+		AND l2.postalCode = l1.postalCode GROUP BY l1.city
+		ORDER BY COUNT DESC';
+
+		$stmt = $this->getDoctrine()->getManager()
+		->getConnection()->prepare($sql);
+
+        //execute query
+		$stmt->execute();
+
+        //get all rows of results 
+		$entities = $stmt->fetchAll();
+
+		foreach ($entities as $entity) {
+			$paths[$entity['path']] = 'uploads/'.$entity['path'];
+		}
+
+		return new JsonResponse($entities);
+	}
+
+
+
+
+	//simply gets all photo paths
+	public function defaultGetPhotoPathsAction()
 	{
 		$paths = array();
 

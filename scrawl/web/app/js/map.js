@@ -14,9 +14,9 @@ app.controller('MapCtrl', ['$scope', '$http',
 					icon: {}
 				};
 
-				console.log('GEOS key' + key);
-				console.log('GEOS lat' + geos[key].lat);
-				console.log('GEOS lng' + geos[key].lng);
+				// console.log('GEOS key' + key);
+				// console.log('GEOS lat' + geos[key].lat);
+				// console.log('GEOS lng' + geos[key].lng);
 
 			});
 			$scope.geos = geos;
