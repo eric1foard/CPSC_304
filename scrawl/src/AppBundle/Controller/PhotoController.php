@@ -475,8 +475,12 @@ class PhotoController extends Controller
         $tags = $stmt->fetchAll();
 
 
+
+
+
         //create entries in has_viewed for each tag
         foreach ($tags as $tag) {
+            
 
             $sql = 'INSERT INTO has_viewed(username, tagName, count) 
             value(:username, :tag, 1)
@@ -485,11 +489,11 @@ class PhotoController extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            
             $stmt->bindValue('tag', $tag['tagName']);
             $stmt->bindValue('username', $username);
 
             $stmt->execute();
+
         }
 
     }
