@@ -311,6 +311,30 @@ class PhotoController extends Controller
             ));
     }
 
+    // public function getPhotoTags($photoPK)
+    // {
+    //     $sql = 'SELECT tagName FROM has_tag WHERE path=:photoPK';
+
+    //     $stmt = $this->getDoctrine()->getManager()
+    //     ->getConnection()->prepare($sql);
+
+    //     $stmt->bindValue('photoPK', $photoPK);
+
+    //     $stmt->execute();
+
+    //     //get all results
+    //     $tags = $stmt->fetchAll();
+
+    //     $result = [];
+    //     foreach ($tags as $key => $value) {
+    //         array_push($result, $value);
+
+    //     }
+
+    //     return $result;
+
+    // }
+
     /**
      * Displays a form to edit an existing Photo entity.
      *
@@ -476,7 +500,7 @@ class PhotoController extends Controller
 
 
         //create entries in has_viewed for each tag
-        foreach ($tags as $tag) {
+        foreach ($tags as $tag['tagName']) {
 
             $sql = 'INSERT INTO has_viewed(username, tagName, count) 
             value(:username, :tag, 1)
