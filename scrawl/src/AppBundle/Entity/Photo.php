@@ -49,6 +49,11 @@ class Photo
      */
     private $longitude;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $device;
+
 
     // These fields are not included in the schema; they are temporary.
 
@@ -319,5 +324,51 @@ class Photo
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * Set viewCount
+     *
+     * @param integer $viewCount
+     * @return Photo
+     */
+    public function setViewCount($viewCount)
+    {
+        $this->viewCount = $viewCount;
+
+        return $this;
+    }
+
+    /**
+     * Get viewCount
+     *
+     * @return integer 
+     */
+    public function getViewCount()
+    {
+        return $this->viewCount;
+    }
+
+    /**
+     * Set device
+     *
+     * @param string $device
+     * @return Photo
+     */
+    public function setDevice($device)
+    {
+        $this->device = $device;
+
+        return $this;
+    }
+
+    /**
+     * Get device
+     *
+     * @return string 
+     */
+    public function getDevice()
+    {
+        return $this->device;
     }
 }

@@ -243,7 +243,7 @@ class PhotoController extends Controller
         $entity = $stmt->fetch();
 
         //pass upload dir to view to use as img src
-        $uploadLocation = 'uploads/'.$entity['id'];
+        $uploadLocation = 'uploads/'.$entity['path'];
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Photo entity.');
