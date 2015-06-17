@@ -8,6 +8,8 @@
 
 <div ng-controller="PhotoCtrl" class="col-md-8">
 
+	{% if is_granted('ROLE_USER') %}
+
 	<div ng-controller="SearchCtrl">
 		<button class="btn btn-default" ng-click="showTags()">Toggle collapse</button>
 		<hr>
@@ -17,15 +19,21 @@
 				<label ng-repeat="tag in tagNames">
 					<input type="checkbox" checklist-model="search.tags" checklist-value="tag"> [[tag]]
 				</label>
+			</br>
+				<h4>Enter Search Radius</h4>
+				<input type="text" name="input" ng-model="search.distance"
+				ng-pattern="/^\d+$/" required ng-trim="false">
 
 				<button class="btn btn-success" ng-click="submitSearch()">Search!</button>
 
 			</div> 
 		</div>
-
 		<div ng-model="search.tags">[[search.tags]]</div>
+		<div ng-model="search.distance">[[search.distance]]</div>
 
 	</div>
+
+	{% endif %}
 
 	<div>
 

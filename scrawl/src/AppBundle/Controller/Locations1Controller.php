@@ -51,7 +51,7 @@ class Locations1Controller extends Controller
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
 
-            $stmt->bindValue('postalCode', $form["postalCode"]->getData();
+            $stmt->bindValue('postalCode', $form["postalCode"]->getData());
             $stmt->bindValue('country', $form["country"]->getData());
             $stmt->bindValue('region', $form["region"]->getData());
             $stmt->bindValue('city', $form["city"]->getData());

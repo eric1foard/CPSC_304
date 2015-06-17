@@ -6,8 +6,10 @@ app.controller('SearchCtrl', function ($scope, $http) {
 	var photos = [];
 
 	$scope.search = {
-		tags: []
+		tags: [],
+		distance: 1
 	};
+
 	var photos = [];
 
 	$scope.showTags = function() {
@@ -40,7 +42,7 @@ app.controller('SearchCtrl', function ($scope, $http) {
 
 	$scope.submitSearch = function() {
 		$scope.$parent.photos.length=0;
-		$http.get('/ajax/search/tags/' + $scope.search.tags).success(function(data){
+		$http.get('/ajax/search/' + $scope.search.tags +'&'+$scope.search.distance).success(function(data){
 			console.log('FROM SUBMIT SEARCH'); 
 
 			// angular.forEach(data, function(value, key){
