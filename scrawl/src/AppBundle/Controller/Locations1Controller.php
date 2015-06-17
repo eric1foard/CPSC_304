@@ -21,9 +21,15 @@ class Locations1Controller extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_locations1';
 
-        $entities = $em->getRepository('AppBundle:Locations1')->findAll();
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+        
+        //execute query
+        $stmt->execute();
+
+        $entities = $stmt->fetchAll();
 
         return $this->render('AppBundle:Locations1:index.html.twig', array(
             'entities' => $entities,
@@ -40,9 +46,18 @@ class Locations1Controller extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+            $sql = 'INSERT INTO scrawl_locations1 value(:postalCode, :country, :region, :city)';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+            $stmt->bindValue('postalCode', $form["postalCode"]->getData();
+            $stmt->bindValue('country', $form["country"]->getData());
+            $stmt->bindValue('region', $form["region"]->getData());
+            $stmt->bindValue('city', $form["city"]->getData());
+
+            //execute query
+            $stmt->execute();
 
             return $this->redirect($this->generateUrl('locations1_show', array('id' => $entity->getId())));
         }
@@ -93,9 +108,19 @@ class Locations1Controller extends Controller
      */
     public function showAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_locations1 WHERE postalCode=?';
 
-        $entity = $em->getRepository('AppBundle:Locations1')->find($id);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
+
+        //execute query
+        $stmt->execute();
+
+        //get only row of result
+        $entity = $stmt->fetch();
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Locations1 entity.');
@@ -115,15 +140,28 @@ class Locations1Controller extends Controller
      */
     public function editAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
+        $sql = 'SELECT * FROM scrawl_locations1 WHERE postalCode=?';
 
-        $entity = $em->getRepository('AppBundle:Locations1')->find($id);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
+        //execute query
+        $stmt->execute();
+        //get only row of result
+        $result = $stmt->fetch();
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Locations1 entity.');
-        }
+        //render edit form
+        $entity = new Locations1();
+        $editForm = $this->createEditForm($entity, $id);
 
-        $editForm = $this->createEditForm($entity);
+        //set edit form fields to data from query
+        $editForm->get('postalCode')->setData($result['postalCode']);
+        $editForm->get('country')->setData($result['country']);
+        $editForm->get('region')->setData($result['region']);
+        $editForm->get('city')->setData($result['city']);
+
+
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('AppBundle:Locations1:edit.html.twig', array(
@@ -157,22 +195,39 @@ class Locations1Controller extends Controller
      */
     public function updateAction(Request $request, $id)
     {
-        $em = $this->getDoctrine()->getManager();
+     //retrieve the hash of form variables passed to the http request
+     //return error message if parameters do not exist
+        try
+        {
+            $postParamsHash = $request->request->get('appbundle_locations1', 'does not exist!');
 
-        $entity = $em->getRepository('AppBundle:Locations1')->find($id);
+            $postalCode = $postParamsHash['postalCode'];
+            $country = $postParamsHash['country'];
+            $region = $postParamsHash['region'];
+            $city = $postParamsHash['city'];
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Locations1 entity.');
+
+            $sql = 'UPDATE scrawl_locations1 SET postalCode=:postalCode, country=:country, region=:region, city=:city WHERE postalCode=:postalCode';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+     //bind variables
+            $stmt->bindValue('postalCode', $id);
+            $stmt->bindValue('country', $country);
+            $stmt->bindValue('region', $region);
+            $stmt->bindValue('city', $city);
+
+
+     //execute query
+            $stmt->execute();
         }
+        catch (\Doctrine\DBAL\DBALException $e) {
 
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
-        $editForm->handleRequest($request);
+            $this->get('session')->getFlashBag()
+            ->add('error','there was a problem updating the location! Please try again.');
 
-        if ($editForm->isValid()) {
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('locations1_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('homepage'));
         }
 
         return $this->render('AppBundle:Locations1:edit.html.twig', array(
@@ -187,20 +242,16 @@ class Locations1Controller extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
+        $sql = 'DELETE FROM scrawl_locations1 WHERE postalCode=?';
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('AppBundle:Locations1')->find($id);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Locations1 entity.');
-            }
+        //replace ? in query with $id
+        $stmt->bindValue(1, $id);
 
-            $em->remove($entity);
-            $em->flush();
-        }
+        //execute query
+        $stmt->execute();
 
         return $this->redirect($this->generateUrl('locations1'));
     }
