@@ -29,10 +29,16 @@
                 <th>Views</th>
                 <td>{{ entity.viewCount }}</td>
             </tr>
+
             <tr>
+                {% if tags is not empty %}
                 <th>Tags</th>
                 <td>{{ tags }}</td>
+                {% else %}
+                <th>This photo has no tags</th>
+                {% endif %}
             </tr>
+
         </tbody>
     </table>
 

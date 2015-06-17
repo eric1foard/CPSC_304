@@ -8,7 +8,6 @@
 
 	<p>Actual marker position (lat/lng): <strong  ng-bind="position.lat"></strong> / <strong ng-bind="position.lng"></strong></p>
 
-	<p>start form</p>
 
 	{{ form_start(form) }}
 
@@ -19,8 +18,6 @@
 	{{ form_row(form.latitude, {'attr':{'ng-model':'position.lat'}}) }}
 	{{ form_row(form.longitude, {'attr':{'ng-model':'position.lng'}}) }}
 
-<!-- 	<input type="number" id="form_latitude" name="form[latitude]" ng-bind="position.lat" value="[[position.lat]]" />
-	<input type="number" id="form_longitude" name="form[longitude]" ng-bind="position.lng" value="[[position.lng]]" /> -->
 
 	{{ form_end(form) }}
 

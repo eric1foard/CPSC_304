@@ -80,48 +80,48 @@ class PhotoController extends Controller
             //execute query
             $stmt->execute();
 
-
-            $tags = $request->request->get('appbundle_photo', 'does not exist!')['tags'];
-
+            if (isset($request->request->get('appbundle_photo', 'does not exist!')['tags']))
+            {
+             $tags = $request->request->get('appbundle_photo', 'does not exist!')['tags'];
             //create relationships between photo and tags
-            $this->createHasTagRecord($entity->getPath(), $tags);
+             $this->createHasTagRecord($entity->getPath(), $tags); 
+         }
 
-            $this->saveUploadUser($entity);
+         $this->saveUploadUser($entity);
 
+         $this->get('session')->getFlashBag()
+         ->add('notice','photo successfully uploaded!');
 
-            $this->get('session')->getFlashBag()
-            ->add('notice','photo successfully uploaded!');
+         return $this->redirectToRoute('homepage');
+     }
 
-            return $this->redirectToRoute('homepage');
-        }
+     $this->get('session')->getFlashBag()
+     ->add('error','oops! something went wrong. Try again!');
 
-        $this->get('session')->getFlashBag()
-        ->add('error','oops! something went wrong. Try again!');
-
-        return $this->redirectToRoute('homepage');
-    }
+     return $this->redirectToRoute('homepage');
+ }
 
     //consume a string representing the PK of the photo
     //and an array of tags and create a record in the
     //has_tag for each tag
-    private function createHasTagRecord($photoKey, $tags)
-    {
+ private function createHasTagRecord($photoKey, $tags)
+ {
 
-        foreach ($tags as $tag) {
-            $sql = 'INSERT INTO has_tag value(:path, :tagName)';
+    foreach ($tags as $tag) {
+        $sql = 'INSERT INTO has_tag value(:path, :tagName)';
 
-            $stmt = $this->getDoctrine()->getManager()
-            ->getConnection()->prepare($sql);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
 
             //set path of photo to be username_somephoto
-            $stmt->bindValue('path', $photoKey);
-            $stmt->bindValue('tagName', $tag);
+        $stmt->bindValue('path', $photoKey);
+        $stmt->bindValue('tagName', $tag);
 
             //execute query
-            $stmt->execute();
-        }
-        return;
+        $stmt->execute();
     }
+    return;
+}
 
     /**
      * Save to uploaded_by table when user saves a photo
@@ -348,7 +348,7 @@ class PhotoController extends Controller
 
         $result = [];
         foreach ($tags as $key => $value) {
-        array_push($result, $value);
+            array_push($result, $value);
         }
 
         return $result;
@@ -483,11 +483,11 @@ class PhotoController extends Controller
         $photoPK = $request->attributes->get('path');
         
         try{
-           $this->updateViewData($photoPK); 
+         $this->updateViewData($photoPK); 
 
-           return new JsonResponse('success from ajaxUpdateViewDataAction!!');
-       }
-       catch(\Exception $e){
+         return new JsonResponse('success from ajaxUpdateViewDataAction!!');
+     }
+     catch(\Exception $e){
 
         return new JsonResponse('problem from ajaxUpdateViewDataAction!!');
 
