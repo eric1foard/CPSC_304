@@ -2,6 +2,8 @@ app.controller('SearchCtrl', function ($scope, $http) {
 
 	$scope.isCollapsed = true;
 	var tagNames = [];
+	var geos = [];
+	var photos = [];
 
 	$scope.search = {
 		tags: []
@@ -41,35 +43,45 @@ app.controller('SearchCtrl', function ($scope, $http) {
 		$http.get('/ajax/search/tags/' + $scope.search.tags).success(function(data){
 			console.log('FROM SUBMIT SEARCH'); 
 
-			angular.forEach(data, function(value, key){
-					photos.push({value, key});
-					console.log('VALUE  '+value);
-					console.log('KEY  '+key);
+			// angular.forEach(data, function(value, key){
+			// 		photos.push({value, key});
+			// 		console.log('VALUE  '+value);
+			// 		console.log('KEY  '+key);
+			// });
+		angular.forEach(data, function(value, key){
+				//photos.push({ value['path'], key });
+				photos[key] = {
+					path: value['path'],
+					key: key
+				};
+				console.log('search photo key type:' + typeof(key));
+				console.log('search photo key:' + key);
+				console.log('search photo path:' + photos[key].path);
 			});
+			//$scope.photos = photos;
+
+			angular.forEach(data, function(value, key){
+
+				//lat and lon are strings from JSON object
+				latitude = parseFloat(value['latitude']);
+				longitude = parseFloat(value['longitude']);
+
+				geos[key] = {
+					lat: latitude, 
+					lng: longitude,
+					focus: false,
+					icon: {}
+				};
+
+				console.log('GEOS key ' + key);
+				console.log('GEOS lat ' + geos[key].lat);
+				console.log('GEOS lng ' + geos[key].lng);
+			});
+
 			$scope.$parent.photos = photos;
+			$scope.$parent.markers = geos;
 			console.log('photos '+photos[0]);
 
 		});
-	};
-
-
-
-	// $scope.submitSearch = function() {
-
-	// 	$http({
-	// 		method: 'POST',
-	// 		url: '/ajax/search/tags',
-	// 		data: $.param(['test','hey','yo']),
-	// 		headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-	// 	})
-	// 	.success(function(data){
-	// 		console.log('from submitSearch success' + data);
-
-	// 	})
-	// 	.error(function(){
-	// 		console.log('from submitSearch failure');
-	// 	});
-	// };
-
-
+};
 });

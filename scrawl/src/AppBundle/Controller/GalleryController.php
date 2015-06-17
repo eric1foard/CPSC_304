@@ -23,7 +23,6 @@ class GalleryController extends Controller
 
 	//create a JSON response to ajaxly return all photo
     //filepaths so that we can render photos with ng-repeat
-	
 	public function getPhotoPathsAction()
 	{
 		if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) 
@@ -35,9 +34,8 @@ class GalleryController extends Controller
 
 	public function loggedInGalleryAction()
 	{
-		$paths = array();
-
-		$sql = 'SELECT path From has_tag Where tagName IN (SELECT tagName From has_viewed WHERE username=:username ORDER BY count)';
+		$sql = 'SELECT DISTINCT sp.path, sp.latitude, sp.longitude From has_tag ht, scrawl_photos sp 
+		Where sp.path = ht.path AND ht.tagName IN (SELECT tagName From has_viewed WHERE username=:username ORDER BY count);';
 
 		$stmt = $this->getDoctrine()->getManager()
 		->getConnection()->prepare($sql);
@@ -52,18 +50,32 @@ class GalleryController extends Controller
         //get all rows of results 
 		$entities = $stmt->fetchAll();
 
-		foreach ($entities as $entity) {
-			$paths[$entity['path']] = 'uploads/'.$entity['path'];
-		}
+		$paths = $this->preparePhotoJson($entities);
 
-		return new JsonResponse($paths);
+		return $paths;
 	}
 
+	//consume response from DB and build JSON response to send to
+	//angular photo controller
+	public function preparePhotoJson($queryResult)
+	{
+		$result = [];
+		//need to index by integer because leaflet needs integer for markers
+		for ($i=0; $i < sizeof($queryResult); $i++) { 
+			$result[$i] = ['path'=>'uploads/'.$queryResult[$i]['path'], 
+			'latitude'=>$queryResult[$i]['latitude'], 
+			'longitude'=>$queryResult[$i]['longitude']];
+		}
+		return new JsonResponse($result);
+	}
+
+	//when user is not logged in, return the photo with the highest view count
+	//in each city
 	public function anonymousGalleryAction()
 	{
 		$paths = array();
 
-		$sql = 'SELECT sp.path, MAX(sp.viewCount) AS count 
+		$sql = 'SELECT sp.path, sp.latitude,sp.longitude, MAX(sp.viewCount) AS count 
 		FROM scrawl_photos sp, scrawl_locations1 l1, scrawl_locations2 l2 
 		WHERE sp.latitude = l2.latitude AND sp.longitude = l2.longitude 
 		AND l2.postalCode = l1.postalCode GROUP BY l1.city
@@ -78,11 +90,9 @@ class GalleryController extends Controller
         //get all rows of results 
 		$entities = $stmt->fetchAll();
 
-		foreach ($entities as $entity) {
-			$paths[$entity['path']] = 'uploads/'.$entity['path'];
-		}
+		$paths = $this->preparePhotoJson($entities);
 
-		return new JsonResponse($paths);
+		return $paths;
 	}
 
 	//consume a username and return a hash of photo paths

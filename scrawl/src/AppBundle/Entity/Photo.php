@@ -187,20 +187,21 @@ class Photo
     // target filename to move to
         $this->getFile()->move(
             $this->getUploadRootDir(),
-            $user_id.'_'.$this->removeSpaces($this->getFile()->getClientOriginalName())
+            $user_id.'_'.$this->sanitizePath($this->getFile()->getClientOriginalName())
             );
 
     // set the path property to the filename where you've saved the file
-        $this->path = $user_id.'_'.$this->removeSpaces($this->getFile()->getClientOriginalName());
+        $this->path = $user_id.'_'.$this->sanitizePath($this->getFile()->getClientOriginalName());
 
     // clean up the file property as you won't need it anymore
         $this->file = null;
 
     }
 
-    private function removeSpaces($string)
+    private function sanitizePath($string)
     {
         $string = str_replace(' ', '', $string);
+        $string = str_replace('-', '', $string);
         return $string;
     }
 

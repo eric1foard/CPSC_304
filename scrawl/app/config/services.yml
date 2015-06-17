@@ -5,4 +5,4 @@ parameters:
 
 services:
     app.geocode_controller:
-        class: AppBundle\Controller\GeocodeController
+        class: AppBundle\Controller\JsonController

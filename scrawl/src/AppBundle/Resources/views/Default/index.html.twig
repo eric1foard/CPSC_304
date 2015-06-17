@@ -29,7 +29,7 @@
 
 	<div>
 
-		<div ng-controller="MapCtrl" >
+		<div>
 
 			<div class="col-md-4" >
 				<leaflet defaults="defaults" markers="markers" center="center" height="480px" width="100%"></leaflet>
@@ -43,8 +43,8 @@
 
 					<img 
 					ng-mouseover="mother.highlight([[card.key]])"
-					ng-click="mother.getArtInfo([[card.key]])"
-					height="100%" width="100%" data-ng-src="[[card.value]]">
+					ng-click="mother.getArtInfo([[card.path]])"
+					height="100%" width="100%" data-ng-src="[[card.path]]">
 
 				</div>
 			</div>

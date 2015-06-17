@@ -20,36 +20,47 @@ use AppBundle\Entity\Photo;
  */
 class SearchController extends Controller
 {
-        public function searchTagsAction(Request $request)
-        {
-            $searchString = $request->get('params');
+    public function searchTagsAction(Request $request)
+    {
+        $searchString = $request->get('params');
 
-            $searchTags = explode(',', $searchString);
+        $searchTags = explode(',', $searchString);
 
-            $this->createTempDivisionTable($searchTags);
+        $this->createTempDivisionTable($searchTags);
 
-            $sql = 'SELECT DISTINCT ht.path as path FROM has_tag ht 
-            WHERE NOT EXISTS (SELECT t.element FROM temp t 
-                WHERE t.element NOT IN 
-                (SELECT ht3.tagName FROM has_tag ht3 WHERE ht3.path = ht.path))';
+        $sql = 'SELECT DISTINCT ht.path as path, p.latitude, p.longitude 
+        FROM has_tag ht, scrawl_photos p WHERE ht.path=p.path 
+        AND NOT EXISTS (SELECT t.element FROM temp t WHERE t.element NOT IN (SELECT ht3.tagName FROM has_tag ht3 WHERE ht3.path = ht.path))';
 
-    $stmt = $this->getDoctrine()->getManager()
-    ->getConnection()->prepare($sql);
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
 
             //execute query
-    $stmt->execute();
+        $stmt->execute();
 
             //get all rows of results 
-    $entities = $stmt->fetchAll();
-    $paths = array();
-    foreach ($entities as $entity) {
-        $paths[$entity['path']] = 'uploads/'.$entity['path'];
+        $entities = $stmt->fetchAll();
+
+        $paths = $this->preparePhotoJson($entities);
+
+        $this->dropTempTable();
+
+        return $paths;
     }
 
-$this->dropTempTable();
-
-return new JsonResponse($paths);
-}
+    //consume response from DB and build JSON response to send to
+    //angular photo controller
+    public function preparePhotoJson($queryResult)
+    {
+        $result = [];
+        //need to index by integer because leaflet needs integer for markers
+        for ($i=0; $i < sizeof($queryResult); $i++) { 
+            $result[$i] = ['path'=>'uploads/'.$queryResult[$i]['path'], 
+            'latitude'=>$queryResult[$i]['latitude'], 
+            'longitude'=>$queryResult[$i]['longitude']];
+        }
+        return new JsonResponse($result);
+    }
 
     public function createTempDivisionTable($array)
     {
