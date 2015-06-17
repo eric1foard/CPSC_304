@@ -22,6 +22,9 @@ class SearchController extends Controller
 {
         public function searchTagsAction(Request $request)
         {
+            $searchString = $request->get('params');
+
+            $searchTags = explode(',', $searchString);
 
             $this->createTempDivisionTable($searchTags);
 

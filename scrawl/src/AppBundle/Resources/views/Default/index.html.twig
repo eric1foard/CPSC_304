@@ -3,24 +3,39 @@
 {% block body %}
 <div ng-controller="RegisterCtrl">
 	{% include 'AppBundle:Nav:navBar.html.twig' %}
-	<div>
-		<label>Name:</label>
-		<input type="text" ng-model="yourName" placeholder="Enter a name here">
-		<hr>
-		<h1>Hello [[yourName]]!</h1>
-	</div>
 	{% include 'AppBundle:Modals:loginModal.html.twig' %}
 </div>
 
-<div>
+<div ng-controller="PhotoCtrl" class="col-md-8">
 
-	<div ng-controller="MapCtrl" >
+	<div ng-controller="SearchCtrl">
+		<button class="btn btn-default" ng-click="showTags()">Toggle collapse</button>
+		<hr>
+		<div collapse="isCollapsed">
+			<div class="well well-lg">
 
-		<div class="col-md-4" >
-			<leaflet defaults="defaults" markers="markers" center="center" height="480px" width="100%"></leaflet>
+				<label ng-repeat="tag in tagNames">
+					<input type="checkbox" checklist-model="search.tags" checklist-value="tag"> [[tag]]
+				</label>
+
+				<button class="btn btn-success" ng-click="submitSearch()">Search!</button>
+
+			</div> 
 		</div>
-		
-		<div ng-controller="PhotoCtrl" class="col-md-8">
+
+		<div ng-model="search.tags">[[search.tags]]</div>
+
+	</div>
+
+	<div>
+
+		<div ng-controller="MapCtrl" >
+
+			<div class="col-md-4" >
+				<leaflet defaults="defaults" markers="markers" center="center" height="480px" width="100%"></leaflet>
+			</div>
+			
+			
 
 			<div deckgrid class="deckgrid" source="photos">
 				
@@ -50,7 +65,7 @@
 	<h4>date</h4>
 	<p>[[artInfo.uploadDate]]</p>
 	<h4>view count</h4>
-    <p>[[artInfo.viewCount]]</p>
+	<p>[[artInfo.viewCount]]</p>
 	<h4>where?</h4>
 	<p>[[artInfo.latitude]] , [[artInfo.longitude]]</p> 
 

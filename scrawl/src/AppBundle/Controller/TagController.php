@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Tag;
 use AppBundle\Form\TagType;
 
@@ -14,6 +14,29 @@ use AppBundle\Form\TagType;
  */
 class TagController extends Controller
 {
+
+
+    public function ajaxGetAllTagsAction()
+    {
+        $sql = 'SELECT id From scrawl_tags';
+
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //execute query
+        $stmt->execute();
+
+        //get all rows of results 
+        $entities = $stmt->fetchAll();
+
+        $tags = array();
+
+        foreach ($entities as $entity) {
+            array_push($tags, $entity['id']);
+        }
+
+        return new JsonResponse($tags);
+    }
 
     /**
      * Lists all Tag entities.
@@ -32,9 +55,6 @@ class TagController extends Controller
 
         //get all rows of results 
         $entities = $stmt->fetchAll();
-
-        //original generated code
-        //$entities = $em->getRepository('AppBundle:Tag')->findAll();
 
         return $this->render('AppBundle:Tag:index.html.twig', array(
             'entities' => $entities,

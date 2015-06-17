@@ -3,7 +3,7 @@
 // [[ and ]]
 
 
-var app = angular.module('Scrawl', ['akoenig.deckgrid', 'leaflet-directive', 'ui.bootstrap']);
+var app = angular.module('Scrawl', ['akoenig.deckgrid', 'leaflet-directive', 'ui.bootstrap', 'checklist-model']);
 
 (function (window, angular) {
     'use strict';
