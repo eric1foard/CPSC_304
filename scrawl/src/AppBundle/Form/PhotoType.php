@@ -15,16 +15,16 @@ class PhotoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('file', 'file', array('required' => true))
-            ->add('latitude')
-            ->add('longitude')
-            ->add('device')
-            ->add('tags', 'entity', array(
-                'class' => 'AppBundle:Tag',
-                'property' => 'tagName',
-                'expanded' => true,
-                'multiple' => true
-                ));
+        ->add('file', 'file', array('required' => true))
+        ->add('latitude')
+        ->add('longitude')
+        ->add('device')
+        ->add('tags', 'entity', array(
+            'class' => 'AppBundle:Tag',
+            'property' => 'tagName',
+            'expanded' => true,
+            'multiple' => true
+            ));
     }
     
     /**
@@ -34,7 +34,7 @@ class PhotoType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\Photo'
-        ));
+            ));
     }
 
     /**

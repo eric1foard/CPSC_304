@@ -35,6 +35,10 @@ ajax_update_view_data:
     path:     /ajax/viewdata/update/{path}
     defaults: {_controller: AppBundle:Photo:ajaxUpdateViewData }
 
+ajax_tag_search:
+    path:     /ajax/search/tags
+    defaults: {_controller: AppBundle:Search:searchTags }
+
 
 #################################
 ##            Security         ##

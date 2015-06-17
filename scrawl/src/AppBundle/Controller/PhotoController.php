@@ -92,7 +92,7 @@ class PhotoController extends Controller
             $this->get('session')->getFlashBag()
             ->add('notice','photo successfully uploaded!');
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => $entity->getPath())));
+            return $this->redirectToRoute('homepage');
         }
 
         $this->get('session')->getFlashBag()
