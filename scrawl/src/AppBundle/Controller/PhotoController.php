@@ -319,9 +319,12 @@ class PhotoController extends Controller
 
         //get only row of result
         $alltags = $stmt2->fetchAll();
-        foreach ($alltags as $tag) {
-            $tags = $tag['tagName'] . ";";
-        }
+        $tags = "";
+        if(!empty($alltags)) {
+            foreach ($alltags as $tag) {
+                $tags = $tags .  "#" . $tag['tagName'] . " ";
+            }
+        };
 
         return $this->render('AppBundle:Photo:show.html.twig', array(
             'entity'         => $entity,
