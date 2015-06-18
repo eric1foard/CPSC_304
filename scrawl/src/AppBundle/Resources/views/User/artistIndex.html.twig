@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+<h1>User list</h1>
+
+<table class="records_list">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Artistic Medium</th>
+            <th>Email</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Selfsummary</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entity in entities %}
+        <tr>
+            <td>{{ entity.username }}</td>
+            <td>{{ entity.preferredMedium }}</td>
+            <td>{{ entity.email }}</td>
+            <td>{{ entity.latitude }}</td>
+            <td>{{ entity.longitude }}</td>
+            <td>{{ entity.selfSummary }}</td>
+            <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('user_show', { 'id': entity.username }) }}">show</a>
+                    </li>
+                    
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -27,6 +27,83 @@ class UserController extends Controller
             ));
     }
 
+    //insert artist into confirmed by and change permission to ROLE_ARTIST
+    public function confirmArtistAction(Request $request)
+    {
+        $artistUsername = $request->get('id');
+        dump($request);
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+        {
+            $adminUsername = $this->getLoggedInUser();
+
+            $sql = 'INSERT INTO confirmed_by value(:adminUsername, :artistUsername)';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+        //replace ? in query with $id
+            $stmt->bindValue('artistUsername', $artistUsername);
+            $stmt->bindValue('adminUsername', $adminUsername);
+
+        //execute query
+            $stmt->execute();
+
+            $sql = 'INSERT INTO scrawl_artists value(:artistUsername, null)';
+
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+        //replace ? in query with $id
+            $stmt->bindValue('artistUsername', $artistUsername);
+
+        //execute query
+            $stmt->execute();
+
+            $sql = 'UPDATE scrawl_users SET role=:role WHERE username=:artistUsername';
+            $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()->prepare($sql);
+
+        //replace ? in query with $id
+            $stmt->bindValue('artistUsername', $artistUsername);
+            $stmt->bindValue('role', 'ROLE_ARTIST');
+
+        //execute query
+            $stmt->execute();
+
+            $this->get('session')->getFlashBag()
+            ->add('notice','Artist created! This user can now visit his or her page and add a perferred artisitic medium!');
+
+            return $this->redirect($this->generateUrl('homepage'));
+
+        }
+
+        $this->get('session')->getFlashBag()
+        ->add('error','you do not have permission to confirm an Artist!');
+
+        return $this->redirect($this->generateUrl('homepage'));
+
+    }
+
+        public function artistIndexAction()
+    {
+
+        $sql = 'SELECT * FROM scrawl_users su, scrawl_artists sa WHERE su.username=sa.username';
+
+        $stmt = $this->getDoctrine()->getManager()
+        ->getConnection()->prepare($sql);
+
+        //execute query
+        $stmt->execute();
+
+        //get all rows of results 
+        $entities = $stmt->fetchAll();
+
+        return $this->render('AppBundle:User:artistIndex.html.twig', array(
+            'entities' => $entities,
+            ));
+    }
+
     /**
      * Lists all User entities.
      *
@@ -127,37 +204,37 @@ class UserController extends Controller
                 return $this->redirect($this->generateUrl('homepage'));
             }
 
-        try{
+            try{
             // Insert into Locations1 table
-            $sql = 'INSERT INTO scrawl_locations1
-                    value(:postalCode, :country, :region, :city)';
-        
-            $stmt = $this->getDoctrine()->getManager()
-            ->getConnection()->prepare($sql);
+                $sql = 'INSERT INTO scrawl_locations1
+                value(:postalCode, :country, :region, :city)';
 
-            $stmt->bindValue('postalCode', $location['postalCode']);
-            $stmt->bindValue('country', $location['country']);
-            $stmt->bindValue('region', $location["region"]);
-            $stmt->bindValue('city', $location["city"]);
+                $stmt = $this->getDoctrine()->getManager()
+                ->getConnection()->prepare($sql);
+
+                $stmt->bindValue('postalCode', $location['postalCode']);
+                $stmt->bindValue('country', $location['country']);
+                $stmt->bindValue('region', $location["region"]);
+                $stmt->bindValue('city', $location["city"]);
 
             //execute query
-            $stmt->execute();
+                $stmt->execute();
 
             // Insert into Locations2 tables
-            $sql2 = 'INSERT INTO scrawl_locations2
-                    value(:latitude, :longitude, :postalCode, :streetAddress)';
-        
-            $stmt2 = $this->getDoctrine()->getManager()
-            ->getConnection()->prepare($sql2);
+                $sql2 = 'INSERT INTO scrawl_locations2
+                value(:latitude, :longitude, :postalCode, :streetAddress)';
 
-            $stmt2->bindValue('latitude', $entity->getLatitude());
-            $stmt2->bindValue('longitude', $entity->getLongitude());
-            $stmt2->bindValue('postalCode', $location['postalCode']);
-            $stmt2->bindValue('streetAddress', $location["streetAddress"]);
+                $stmt2 = $this->getDoctrine()->getManager()
+                ->getConnection()->prepare($sql2);
+
+                $stmt2->bindValue('latitude', $entity->getLatitude());
+                $stmt2->bindValue('longitude', $entity->getLongitude());
+                $stmt2->bindValue('postalCode', $location['postalCode']);
+                $stmt2->bindValue('streetAddress', $location["streetAddress"]);
 
             //execute query
-            $stmt2->execute();
-        }
+                $stmt2->execute();
+            }
         catch (\Doctrine\DBAL\DBALException $e) { // Should check for more specific exception
             // duplicate entry. Entry we want already in the table. Everything is good.
         }
@@ -188,7 +265,7 @@ class UserController extends Controller
             'city' => $this->geolocationJSONParser($addressComponents, 'locality'),
             'region' => $this->geolocationJSONParser($addressComponents, 'administrative_area_level_1'),
             'country' => $this->geolocationJSONParser($addressComponents, 'country')
-        );
+            );
 
         return $location;
     }
@@ -199,13 +276,13 @@ class UserController extends Controller
     {
         $val = '';
         
-            for($i = 0; $i < count($sourcearray); $i++){
-                foreach ($sourcearray[$i]['types'] as $type) {
-                    if(stristr($type, $keyword)){
-                        $val = $sourcearray[$i]['long_name'];
-                    }
+        for($i = 0; $i < count($sourcearray); $i++){
+            foreach ($sourcearray[$i]['types'] as $type) {
+                if(stristr($type, $keyword)){
+                    $val = $sourcearray[$i]['long_name'];
                 }
             }
+        }
 
         return $val;
     }
@@ -366,9 +443,9 @@ class UserController extends Controller
             //WHERE statement must reference current uname (id passed to this fn)
             //in case user has updated username
             $sql = 'UPDATE scrawl_users 
-                    SET username=:uname, email=:email, latitude=:lat, 
-                    longitude=:lng, selfSummary=:selfSum, password_hash=:encoded 
-                    WHERE username=:id';
+            SET username=:uname, email=:email, latitude=:lat, 
+            longitude=:lng, selfSummary=:selfSum, password_hash=:encoded 
+            WHERE username=:id';
 
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
@@ -385,6 +462,24 @@ class UserController extends Controller
             //execute query
             $stmt->execute();
 
+            if ($this->get('security.authorization_checker')->isGranted('ROLE_ARTIST'))
+            {
+                $medium = $postParamsHash['preferredMedium'];
+
+            //WHERE statement must reference current uname (id passed to this fn)
+            //in case user has updated username
+                $sql = 'INSERT INTO scrawl_artists value(:uname, :medium)';
+
+                $stmt = $this->getDoctrine()->getManager()
+                ->getConnection()->prepare($sql);
+
+            //bind variables
+                $stmt->bindValue('uname', $uname);
+                $stmt->bindValue('medium', $medium);
+
+            //execute query
+                $stmt->execute();
+            }
         }
         catch (\Doctrine\DBAL\DBALException $e) {
 
@@ -462,5 +557,10 @@ class UserController extends Controller
             return true;
         }
         return false;
+    }
+
+        public function getLoggedInUser()
+    {
+        return $this->get('security.token_storage')->getToken()->getUser()->getId();
     }
 }

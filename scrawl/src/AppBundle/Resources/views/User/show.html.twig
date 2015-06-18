@@ -3,9 +3,17 @@
 {% block body -%}
     <h1>User</h1>
 
+    {% if is_granted('ROLE_ADMIN') %}
+      <a href="{{ path('artist_confirm', { 'id': entity.username }) }}">
+            Confirm User as Artist
+        </a>
+
+      {% endif %}
+
+      
+
     <table class="record_properties">
         <tbody>
-
             <tr>
                 <th>Username</th>
                 <td>{{ entity.username }}</td>

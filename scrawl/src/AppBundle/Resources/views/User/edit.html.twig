@@ -1,11 +1,22 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>User edit</h1>
+<h1>User edit</h1>
 
-    {{ form(edit_form) }}
 
-        <ul class="record_actions">
+{{ form_start(edit_form) }}
+{{ form_errors(edit_form) }}
+
+{{ form_widget(edit_form) }}
+
+
+{% if is_granted('ROLE_ARTIST') %}
+{{ form_row(edit_form.preferredMedium) }}
+{% endif %}
+
+{{ form_end(edit_form) }}
+
+<ul class="record_actions">
     <li>
     	{% if is_granted('ROLE_ADMIN') %}
         <a href="{{ path('user') }}">
