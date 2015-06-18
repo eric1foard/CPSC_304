@@ -33,7 +33,6 @@ class SearchController extends Controller
         $searchResult = $this->searchDistance($radius);
 
         $paths = $this->preparePhotoJson($searchResult);
-
         $this->dropTempTable();
 
         return $paths;
@@ -43,10 +42,9 @@ class SearchController extends Controller
     public function searchDistance($radius)
     {
         $sql = 'SELECT path, latitude, longitude, SQRT(POW((latitude - (SELECT latitude FROM scrawl_users WHERE username =:username)), 2)+
-            POW(((SELECT longitude FROM scrawl_users WHERE username =:username) - longitude), 2)) AS distance FROM scrawl_photos 
-WHERE exists (SELECT DISTINCT ht.path as path, p.latitude, p.longitude FROM has_tag ht, scrawl_photos p WHERE ht.path=p.path 
-    AND NOT EXISTS (SELECT t.element FROM temp t WHERE t.element NOT IN (SELECT ht3.tagName FROM has_tag ht3 WHERE ht3.path = ht.path))) 
-HAVING distance <=:radius ORDER BY distance;';
+        POW(((SELECT longitude FROM scrawl_users WHERE username =:username) - longitude), 2)) AS distance FROM scrawl_photos 
+        WHERE path IN (SELECT PS1.path FROM has_tag AS PS1, temp AS H1 WHERE PS1.tagName = H1.element GROUP BY PS1.path
+        HAVING COUNT(PS1.tagName) = (SELECT COUNT(element) FROM temp)) HAVING distance <=:radius ORDER BY distance;';
 
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
@@ -61,7 +59,6 @@ HAVING distance <=:radius ORDER BY distance;';
 
             //get all rows of results 
         $entities = $stmt->fetchAll();
-
         return $entities;
     }
 
@@ -123,7 +120,7 @@ HAVING distance <=:radius ORDER BY distance;';
     public function createTempDivisionTable($array)
     {
             //create a temporary table
-        $sql = 'CREATE TEMPORARY TABLE temp(element VARCHAR(32))';
+        $sql = 'CREATE TABLE temp(element VARCHAR(20))';
 
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
@@ -131,7 +128,7 @@ HAVING distance <=:radius ORDER BY distance;';
         $stmt->execute();
 
         foreach ($array as $elt) {
-            $sql = 'INSERT INTO temp value(:elt)';
+            $sql = 'INSERT INTO temp values(:elt)';
 
             $stmt = $this->getDoctrine()->getManager()
             ->getConnection()->prepare($sql);
