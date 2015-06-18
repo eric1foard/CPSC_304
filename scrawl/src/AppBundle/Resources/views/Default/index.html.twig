@@ -11,54 +11,57 @@
 	{% if is_granted('ROLE_USER') %}
 
 	<div ng-controller="SearchCtrl">
-		<button class="btn btn-default" ng-click="showTags()">Toggle collapse</button>
+		<button class="btn btn-default" ng-click="showTags()">Search For Art!</button>
 		<hr>
 		<div collapse="isCollapsed">
 			<div class="well well-lg">
-
+				<h4>Select Tags</h4>
 				<label ng-repeat="tag in tagNames">
 					<input type="checkbox" checklist-model="search.tags" checklist-value="tag"> [[tag]]
 				</label>
 			</br>
-				<h4>Enter Search Radius</h4>
+			<h4>Enter Search Radius</h4>
+
+			<form novalidate name="myForm" class="form-horzontal" ng-submit="submitSearch()">
+
 				<input type="text" name="input" ng-model="search.distance"
-				ng-pattern="/^\d+$/" required ng-trim="false">
+				ng-pattern="/^\-?\d+((\.|\,)\d+)?$/" maxlength="7" required>
+				<input type="submit" value="Go!" class="btn btn-primary btn-lg raised" ng-disabled="myForm.$invalid">
+			</form>
 
-				<button class="btn btn-success" ng-click="submitSearch()">Search!</button>
-
-			</div> 
-		</div>
-		<div ng-model="search.tags">[[search.tags]]</div>
-		<div ng-model="search.distance">[[search.distance]]</div>
-
+		</div> 
 	</div>
+	<div ng-model="search.tags">[[search.tags]]</div>
+	<div ng-model="search.distance">[[search.distance]]</div>
 
-	{% endif %}
+</div>
+
+{% endif %}
+
+<div>
 
 	<div>
 
-		<div>
-
-			<div class="col-md-4" >
-				<leaflet defaults="defaults" markers="markers" center="center" height="480px" width="100%"></leaflet>
-			</div>
-
-
-
-			<div deckgrid class="deckgrid" source="photos">
-				
-				<div ng-style="{'border':'solid 10px'}" class="a-card" ng-attr="[[card.key]]">
-
-					<img 
-					ng-mouseover="mother.highlight([[card.key]])"
-					ng-click="mother.getArtInfo([[card.path]])"
-					height="100%" width="100%" data-ng-src="[[card.path]]">
-
-				</div>
-			</div>
+		<div class="col-md-4" >
+			<leaflet defaults="defaults" markers="markers" center="center" height="480px" width="100%"></leaflet>
 		</div>
 
+
+
+		<div deckgrid class="deckgrid" source="photos">
+
+			<div ng-style="{'border':'solid 10px'}" class="a-card" ng-attr="[[card.key]]">
+
+				<img 
+				ng-mouseover="mother.highlight([[card.key]])"
+				ng-click="mother.getArtInfo([[card.path]])"
+				height="100%" width="100%" data-ng-src="[[card.path]]">
+
+			</div>
+		</div>
 	</div>
+
+</div>
 
 </div>
 
