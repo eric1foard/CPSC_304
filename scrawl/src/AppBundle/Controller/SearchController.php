@@ -24,27 +24,35 @@ class SearchController extends Controller
     public function searchAction(Request $request)
     {
 
+        $this->dropTempTable();
+
         $searchArgs = $this->parseArguments($request->get('params'));
         $radius = $searchArgs['radius'];
         $searchTags = $searchArgs['tags'];
 
         $this->createTempDivisionTable($searchTags);
 
-        $searchResult = $this->searchDistance($radius);
+        $searchResult = $this->searchDistance($radius, $searchTags);
 
         $paths = $this->preparePhotoJson($searchResult);
-        $this->dropTempTable();
+        
 
         return $paths;
     }
 
         //execute query to search by distance based on user input
-    public function searchDistance($radius)
+    public function searchDistance($radius, $searchTags)
     {
+
         $sql = 'SELECT path, latitude, longitude, SQRT(POW((latitude - (SELECT latitude FROM scrawl_users WHERE username =:username)), 2)+
-        POW(((SELECT longitude FROM scrawl_users WHERE username =:username) - longitude), 2)) AS distance FROM scrawl_photos 
-        WHERE path IN (SELECT PS1.path FROM has_tag AS PS1, temp AS H1 WHERE PS1.tagName = H1.element GROUP BY PS1.path
-        HAVING COUNT(PS1.tagName) = (SELECT COUNT(element) FROM temp)) HAVING distance <=:radius ORDER BY distance;';
+        POW(((SELECT longitude FROM scrawl_users WHERE username =:username) - longitude), 2)) AS distance FROM scrawl_photos';
+
+        if(empty($searchArgs['tags'])){
+            $sql = $sql . ' HAVING distance <=:radius ORDER BY distance;';
+        } else{
+            $sql = $sql . ' WHERE path IN (SELECT PS1.path FROM has_tag AS PS1, temp AS H1 WHERE PS1.tagName = H1.element GROUP BY PS1.path
+            HAVING COUNT(PS1.tagName) = (SELECT COUNT(element) FROM temp)) HAVING distance <=:radius ORDER BY distance;';
+        }
 
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
