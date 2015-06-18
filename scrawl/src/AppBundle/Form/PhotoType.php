@@ -16,9 +16,9 @@ class PhotoType extends AbstractType
     {
         $builder
         ->add('file', 'file', array('required' => true))
-        ->add('latitude')
-        ->add('longitude')
-        ->add('device')
+        ->add('latitude', 'number', array('required' => true))
+        ->add('longitude','number', array('required' => true))
+        ->add('device','text', array('required' => true))
         ->add('tags', 'entity', array(
             'class' => 'AppBundle:Tag',
             'property' => 'tagName',
