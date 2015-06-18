@@ -44,24 +44,28 @@ class SearchController extends Controller
     public function searchDistance($radius, $searchTags)
     {
 
-        $sql = 'SELECT path, latitude, longitude, SQRT(POW((latitude - (SELECT latitude FROM scrawl_users WHERE username =:username)), 2)+
-        POW(((SELECT longitude FROM scrawl_users WHERE username =:username) - longitude), 2)) AS distance FROM scrawl_photos';
+        if(empty($searchTags[0])){
+            $sql = 'SELECT path, latitude, longitude, SQRT(POW((latitude - (SELECT latitude FROM scrawl_users WHERE username =:username)), 2)+
+            POW(((SELECT longitude FROM scrawl_users WHERE username =:username) - longitude), 2)) AS distance FROM scrawl_photos 
+            HAVING distance <=:radius ORDER BY distance;';
 
-        if(empty($searchArgs['tags'])){
-            $sql = $sql . ' HAVING distance <=:radius ORDER BY distance;';
         } else{
-            $sql = $sql . ' WHERE path IN (SELECT PS1.path FROM has_tag AS PS1, temp AS H1 WHERE PS1.tagName = H1.element GROUP BY PS1.path
+            $sql = 'SELECT path, latitude, longitude, SQRT(POW((latitude - (SELECT latitude FROM scrawl_users WHERE username =:username)), 2)+
+            POW(((SELECT longitude FROM scrawl_users WHERE username =:username) - longitude), 2)) AS distance FROM scrawl_photos 
+            WHERE path IN (SELECT PS1.path FROM has_tag AS PS1, temp AS H1 WHERE PS1.tagName = H1.element GROUP BY PS1.path
             HAVING COUNT(PS1.tagName) = (SELECT COUNT(element) FROM temp)) HAVING distance <=:radius ORDER BY distance;';
         }
+
 
         $stmt = $this->getDoctrine()->getManager()
         ->getConnection()->prepare($sql);
 
+        
         $username = $this->getLoggedInUser();
-
         $stmt->bindValue('username', $username);
-        $stmt->bindValue('radius', $radius);
-
+        $stmt->bindValue('radius', $radius);    
+        
+        
             //execute query
         $stmt->execute();
 
